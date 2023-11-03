@@ -202,4 +202,3 @@ while run:
     pygame.display.flip()
 #this will quite the  window of the pygame 
 pygame.quit()
-print(k)

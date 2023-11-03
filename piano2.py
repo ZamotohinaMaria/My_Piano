@@ -27,10 +27,10 @@ active_blacks = []
 lenght_key = 34
 fps = 60
 
+key_list = pl2.key_list
 piano_notes2 = pl2.get_notes_dict()
 white_notes = pl2.white_notes
 black_flats = pl2.black_flats
-black_sharps = pl2.black_sharps
 
 #for loop is for accessing notes from the assets folder for all the white key on piano
 for i in range(len(white_notes)):
@@ -68,7 +68,7 @@ def draw_piano(whites, blacks):
         black_rects.append(rect)
         
         #this variable will handle all the labels that the keys will have in our project
-        key_label = real_small_font.render(black_sharps[i], True, 'white')
+        key_label = real_small_font.render(black_flats[i], True, 'white')
         screen.blit(key_label, (25 + (i * lenght_key) + (skip_count * lenght_key), HEIGHT - 120))
         
         for q in range(len(blacks)):
@@ -135,44 +135,17 @@ while run:
                 if white_keys[i].collidepoint(event.pos) and not black_key:
                     white_sounds[i].play(0, 1500)
                     active_whites.append([i, 30])
-                    
-        # if event.type == pygame.TEXTINPUT:
-        #     # print(event.text)
-        #     # print(right_dict[event.text])
-        #     if event.text in left_dict:
-        #         if left_dict[event.text] in piano_notes:
-        #             index = white_notes.index(left_dict[event.text])
-        #             white_sounds[index].play(0, 1000)
-        #             active_whites.append([index, 30])
-                    
-        #     if event.text in right_dict:
-        #         if right_dict[event.text] in piano_notes:
-        #             index = white_notes.index(right_dict[event.text])
-        #             white_sounds[index].play(0, 1000)
-        #             active_whites.append([index, 30])
-            
-        #     if event.text in black_sharps_dict and black_type == 'sharp':
-        #         if black_sharps_dict[event.text] in piano_notes:
-        #             index = black_sharps.index(black_sharps_dict[event.text])
-        #             black_sounds[index].play(0, 1000)
-        #             active_blacks.append([index, 30])
-                
-        #     if event.text in black_flats_dict and black_type == 'flat':
-        #         if black_flats_dict[event.text] in piano_notes:
-        #             index = black_flats.index(black_flats_dict[event.text])
-        #             black_sounds[index].play(0, 1000)
-        #             active_blacks.append([index, 30])
                 
         if event.type == pygame.KEYDOWN:
-            print(piano_notes2[str(event.key)])
-            if piano_notes2[str(event.key)] in black_sharps:
-                index = black_sharps.index(piano_notes2[str(event.key)])
-                black_sounds[index].play(0, 1000)
-                active_blacks.append([index, 30])
-            if piano_notes2[str(event.key)] in white_notes:
-                index = white_notes.index(piano_notes2[str(event.key)])
-                white_sounds[index].play(0, 1000)
-                active_whites.append([index, 30])
+            if event.key in key_list:
+                if piano_notes2[str(event.key)] in black_flats:
+                    index = black_flats.index(piano_notes2[str(event.key)])
+                    black_sounds[index].play(0, 1000)
+                    active_blacks.append([index, 30])
+                if piano_notes2[str(event.key)] in white_notes:
+                    index = white_notes.index(piano_notes2[str(event.key)])
+                    white_sounds[index].play(0, 1000)
+                    active_whites.append([index, 30])
 
 
     pygame.display.flip()
