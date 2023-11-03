@@ -1,4 +1,5 @@
-#basic library imports for Piano in Python
+# ПОРАБОТАТЬ НАД ВТОРОЙ РАСКЛАДКОЙ, ДРУГИМ ВИДОМ И ПРОКРУТКОЙ
+# basic library imports for Piano in Python
 import pygame
 import piano_lists as pl
 from pygame import mixer
@@ -107,36 +108,6 @@ def draw_piano(whites, blacks):
 
     return white_rects, black_rects, whites, blacks
 
-
-# def draw_hands(rightOct, leftOct, rightHand, leftHand):
-# # left hand side keys are handles by the below section of code
-#     pygame.draw.rect(screen, 'dark gray', [(leftOct * 245) - 175, HEIGHT - 60, 245, 30], 0, 4)
-#     pygame.draw.rect(screen, 'black', [(leftOct * 245) - 175, HEIGHT - 60, 245, 30], 4, 4)
-#     text = small_font.render(leftHand[0], True, 'white')
-#     screen.blit(text, ((leftOct * 245) - 165, HEIGHT - 55))
-#     text = small_font.render(leftHand[2], True, 'white')
-#     screen.blit(text, ((leftOct * 245) - 130, HEIGHT - 55))
-#     text = small_font.render(leftHand[4], True, 'white')
-#     screen.blit(text, ((leftOct * 245) - 95, HEIGHT - 55))
-#     text = small_font.render(leftHand[5], True, 'white')
-#     screen.blit(text, ((leftOct * 245) - 60, HEIGHT - 55))
-#     text = small_font.render(leftHand[7], True, 'white')
-#     screen.blit(text, ((leftOct * 245) - 25, HEIGHT - 55))
-#     text = small_font.render(leftHand[9], True, 'white')
-#     screen.blit(text, ((leftOct * 245) + 10, HEIGHT - 55))
-#     text = small_font.render(leftHand[11], True, 'white')
-#     screen.blit(text, ((leftOct * 245) + 45, HEIGHT - 55))
-#     text = small_font.render(leftHand[1], True, 'black')
-#     screen.blit(text, ((leftOct * 245) - 148, HEIGHT - 55))
-#     text = small_font.render(leftHand[3], True, 'black')
-#     screen.blit(text, ((leftOct * 245) - 113, HEIGHT - 55))
-#     text = small_font.render(leftHand[6], True, 'black')
-#     screen.blit(text, ((leftOct * 245) - 43, HEIGHT - 55))
-#     text = small_font.render(leftHand[8], True, 'black')
-#     screen.blit(text, ((leftOct * 245) - 8, HEIGHT - 55))
-#     text = small_font.render(leftHand[10], True, 'black')
-#     screen.blit(text, ((leftOct * 245) + 27, HEIGHT - 55))
-
 #this will draw the upper section of Piano GUI In Python
 def draw_title_bar():
     instruction_text = medium_font.render('Up/Down Arrows Change Left Hand', True, 'black')
@@ -184,24 +155,28 @@ while run:
             # print(event.text)
             # print(right_dict[event.text])
             if event.text in left_dict:
-                index = white_notes.index(left_dict[event.text])
-                white_sounds[index].play(0, 1000)
-                active_whites.append([index, 30])
+                if left_dict[event.text] in piano_notes:
+                    index = white_notes.index(left_dict[event.text])
+                    white_sounds[index].play(0, 1000)
+                    active_whites.append([index, 30])
                     
             if event.text in right_dict:
-                index = white_notes.index(right_dict[event.text])
-                white_sounds[index].play(0, 1000)
-                active_whites.append([index, 30])
+                if right_dict[event.text] in piano_notes:
+                    index = white_notes.index(right_dict[event.text])
+                    white_sounds[index].play(0, 1000)
+                    active_whites.append([index, 30])
             
             if event.text in black_sharps_dict and black_type == 'sharp':
-                index = black_sharps.index(black_sharps_dict[event.text])
-                black_sounds[index].play(0, 1000)
-                active_blacks.append([index, 30])
+                if black_sharps_dict[event.text] in piano_notes:
+                    index = black_sharps.index(black_sharps_dict[event.text])
+                    black_sounds[index].play(0, 1000)
+                    active_blacks.append([index, 30])
                 
             if event.text in black_flats_dict and black_type == 'flat':
-                index = black_flats.index(black_flats_dict[event.text])
-                black_sounds[index].play(0, 1000)
-                active_blacks.append([index, 30])
+                if black_flats_dict[event.text] in piano_notes:
+                    index = black_flats.index(black_flats_dict[event.text])
+                    black_sounds[index].play(0, 1000)
+                    active_blacks.append([index, 30])
                 
                     
         if event.type == pygame.KEYDOWN:
