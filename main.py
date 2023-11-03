@@ -1,7 +1,8 @@
 # ПОРАБОТАТЬ НАД ВТОРОЙ РАСКЛАДКОЙ, ДРУГИМ ВИДОМ И ПРОКРУТКОЙ
-# basic library imports for Piano in Python
+# В БУДУЩЕМ - ЗАЩИЩЕННОСТЬ (ФЛЕШКА И КЛЮЧ), ЦВЕТОВАЯ ТЕМА, УЧИТЬСЯ ИГРАТЬ
 import pygame
 import piano_lists as pl
+import piano_list2 as pl2
 from pygame import mixer
 import os
 
@@ -35,6 +36,7 @@ lenght_key = 34
 fps = 60
 black_type = 'sharp'
 
+piano_notes2 = pl2.get_notes_dict()
 piano_notes = pl.piano_notes
 white_notes = pl.white_notes
 black_flats = pl.black_flats
@@ -178,7 +180,6 @@ while run:
                     black_sounds[index].play(0, 1000)
                     active_blacks.append([index, 30])
                 
-                    
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RIGHT:
                 if right_oct < 8:
@@ -202,3 +203,4 @@ while run:
     pygame.display.flip()
 #this will quite the  window of the pygame 
 pygame.quit()
+print(k)
