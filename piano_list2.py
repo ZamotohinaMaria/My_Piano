@@ -23,7 +23,7 @@ black_flats = ['Db2', 'Eb2', 'Gb2', 'Ab2', 'Bb2',
 
 key_list = [pygame.K_PERIOD, pygame.K_SEMICOLON, pygame.K_p, pygame.K_0,
             pygame.K_COMMA, pygame.K_l, pygame.K_o, pygame.K_9,
-            pygame.K_RSHIFT, '13', pygame.K_RIGHTBRACKET, pygame.K_EQUALS,
+            pygame.K_RSHIFT, pygame.K_RETURN, pygame.K_RIGHTBRACKET, pygame.K_EQUALS,
             pygame.K_SLASH, pygame.K_QUOTE, pygame.K_LEFTBRACKET, pygame.K_MINUS,
             pygame.K_BACKSLASH, pygame.K_a, pygame.K_q, pygame.K_1, pygame.K_BACKSPACE, 
             pygame.K_x, pygame.K_d, pygame.K_e, pygame.K_3,
@@ -41,7 +41,7 @@ def get_notes_dict() -> dict:
                  f'{pygame.K_PERIOD}': 'A2', f'{pygame.K_SEMICOLON}': 'A3', f'{pygame.K_p}': 'A4', f'{pygame.K_0}': 'A5',
                  f'{pygame.K_COMMA}': 'Ab2', f'{pygame.K_l}': 'Ab3', f'{pygame.K_o}': 'Ab4', f'{pygame.K_9}': 'Ab5',
 
-                 f'{pygame.K_RSHIFT}': 'B2', '13': 'B3', f'{pygame.K_RIGHTBRACKET }': 'B4', f'{pygame.K_EQUALS}': 'B5',
+                 f'{pygame.K_RSHIFT}': 'B2', f'{pygame.K_RETURN}': 'B3', f'{pygame.K_RIGHTBRACKET}': 'B4', f'{pygame.K_EQUALS}': 'B5',
                  f'{pygame.K_SLASH}': 'Bb2', f'{pygame.K_QUOTE}': 'Bb3', f'{pygame.K_LEFTBRACKET}': 'Bb4', f'{pygame.K_MINUS}': 'Bb5',
                  
                  f'{pygame.K_BACKSLASH}': 'C2', f'{pygame.K_a}': 'C3', f'{pygame.K_q}': 'C4', f'{pygame.K_1}': 'C5', f'{pygame.K_BACKSPACE}': 'C6',
