@@ -57,14 +57,21 @@ def draw_piano(active_whites, active_blacks):
         rect = pygame.draw.rect(screen, 'white', [10 + i * lenght_key, HEIGHT - height_key, lenght_key, height_key], 2, 2)
         white_rects.append(rect)      
         
-    for i in range(len(active_whites)):
-        if active_whites[i][1] > 0:
+    i = 0
+    len_white = len(active_whites)
+    while i < len_white and len_white > 0:
+        if active_whites[i][1] == 0:
+            active_whites.pop(i)
+            len_white -= 1
+        elif active_whites[i][1] > 0:
             j = active_whites[i][0]
             pygame.draw.rect(screen, 'gray', [10 + j * lenght_key, HEIGHT - height_key, lenght_key, height_key], 0, 2)
             f.gradientRect(screen, 'white', (204, 255, 153), pygame.Rect(10 + j * lenght_key, HEIGHT - (height_key*(8/5) - 1), lenght_key, height_key*(3/5))) 
             active_whites[i][1] -= 1
         if len(active_whites) > 10000:
             active_whites.clear()
+        if i < len_white:
+            i +=1
             
     for i in range(len(white_notes_label)):
         pygame.draw.rect(screen, 'black', [10 + i * lenght_key, HEIGHT - height_key, lenght_key + 1, 300], 2, 2)
@@ -80,15 +87,23 @@ def draw_piano(active_whites, active_blacks):
         rect = pygame.draw.rect(screen, 'black', [10 + lenght_key*(1/1.5 + i + skip_count), HEIGHT - height_key, lenght_key/1.4, height_key*2/3], 0, 2)
         black_rects.append(rect)
         
-        for q in range(len(active_blacks)):
+        q = 0
+        len_black = len(active_blacks)
+        while q < len_black and len_black > 0:
             if active_blacks[q][0] == i:
-                if active_blacks[q][1] > 0:
+                if active_blacks[q][1] == 0:
+                    active_blacks.pop(q)
+                    len_black -= 1
+                elif active_blacks[q][1] > 0:
                     pygame.draw.rect(screen, (96, 96, 96), [10 + lenght_key*(1/1.5 + i + skip_count), HEIGHT - height_key, lenght_key/1.4, height_key*2/3], 0, 2)
                     pygame.draw.rect(screen, 'black', [10 + lenght_key*(1/1.5 + i + skip_count), HEIGHT - height_key, lenght_key/1.4, height_key*2/3], 2, 2)
                     f.gradientRect(screen, 'white', (76, 153, 0), pygame.Rect(10 + lenght_key*(1/1.5 + i + skip_count), HEIGHT - (height_key*(8/5) -1), lenght_key/1.4, height_key*(3/5))) 
                     active_blacks[q][1] -= 1
                 if len(active_blacks) > 10000:
                     active_blacks.clear()
+            if q < len_black:
+                    q += 1
+            
                     
         key_label = real_small_font.render(black_flats_label[i], True, 'white')
         screen.blit(key_label, (10 + lenght_key*(1/1.5 + i + skip_count + 1/(4.5*1.5)), HEIGHT - height_key*(1/2)))
