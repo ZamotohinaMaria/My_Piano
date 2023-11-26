@@ -13,8 +13,8 @@ pygame.mixer.set_num_channels(50)
 font = pygame.font.Font('assets/timesnrcyrmt.ttf', 48)
 medium_font = pygame.font.Font('assets/timesnrcyrmt_bold.ttf', 28)
 small_font = pygame.font.Font('assets/timesnrcyrmt_inclined.ttf', 16)
+button_font = pygame.font.Font('assets/timesnrcyrmt.ttf', 14)
 real_small_font = pygame.font.Font('assets/timesnrcyrmt.ttf', 10)
-
 
 timer = pygame.time.Clock()
 WIDTH = 1200
@@ -26,66 +26,72 @@ white_sounds = []
 black_sounds = []
 active_whites = []
 active_blacks = []
+active_button_white = []
+active_button_black = []
 
 lenght_key = (WIDTH - 20)/29
+height_key = HEIGHT/4
+lenght_button = WIDTH/20
+height_button = HEIGHT/12
 fps = 60
 
 key_list = pl2.key_list
-piano_notes2 = pl2.get_notes_dict()
-white_notes = pl2.white_notes
-black_flats = pl2.black_flats
-white_sounds, black_sounds = f.get_sounds(white_notes, black_flats)
+button_label = pl2.button_list
+piano_notes_label = pl2.piano_notes
+piano_notes_key = pl2.get_notes_dict()
+white_notes_label = pl2.white_notes
+black_flats_label = pl2.black_flats
+white_button_list = pl2.white_button_list
+black_button_list = pl2.black_button_list
+white_sounds, black_sounds = f.get_sounds(white_notes_label, black_flats_label)
+not_note_buttom = [0, 1, 2, 3, 4, 5, 6, 7, 20, 33, 46, 47]
 
 current_size = screen.get_size()
 virtual_surface = pygame.Surface((WIDTH, HEIGHT))
 
-#this function will draw the piano keys on the window of Piano in Python
-def draw_piano(whites, blacks):
-    print(type(screen))
-    pygame.draw.rect(screen, 'black', [10, HEIGHT - 500, lenght_key * 29 + 4, 504], 2, 2)
+def draw_piano(active_whites, active_blacks):
+    pygame.draw.rect(screen, 'black', [10, HEIGHT - (9/5)*height_key, lenght_key * 29 + 4, (9/5)*height_key], 1, 2)
     
     white_rects = []
-    for i in range(len(white_notes)):
-        #we made use of rect() function in order to draw the key of the piano for white keys
-        rect = pygame.draw.rect(screen, 'white', [10 + i * lenght_key, HEIGHT - 300, lenght_key, 300], 2, 2)
+    for i in range(len(white_notes_label)):
+        rect = pygame.draw.rect(screen, 'white', [10 + i * lenght_key, HEIGHT - height_key, lenght_key, height_key], 2, 2)
         white_rects.append(rect)      
-        #this variable will handle all the labels that the keys will have in our project
         
-    #this will move the green block from white spaces to another white spaces
-    for i in range(len(whites)):
-        if whites[i][1] > 0:
-            j = whites[i][0]
-            pygame.draw.rect(screen, 'gray', [10 + j * lenght_key, HEIGHT - 300, lenght_key, 300], 0, 2)
-            f.gradientRect(screen, 'white', (204, 255, 153), pygame.Rect(10 + j * lenght_key, HEIGHT - 496, lenght_key, 196)) 
-            whites[i][1] -= 1
+    for i in range(len(active_whites)):
+        if active_whites[i][1] > 0:
+            j = active_whites[i][0]
+            pygame.draw.rect(screen, 'gray', [10 + j * lenght_key, HEIGHT - height_key, lenght_key, height_key], 0, 2)
+            f.gradientRect(screen, 'white', (204, 255, 153), pygame.Rect(10 + j * lenght_key, HEIGHT - (height_key*(8/5) - 1), lenght_key, height_key*(3/5))) 
+            active_whites[i][1] -= 1
+        if len(active_whites) > 10000:
+            active_whites.clear()
             
-    for i in range(len(white_notes)):
-        pygame.draw.rect(screen, 'black', [10 + i * lenght_key, HEIGHT - 300, lenght_key + 1, 300], 2, 2)
-        key_label = small_font.render(white_notes[i], True, 'black')
-        screen.blit(key_label, (10 + i * lenght_key + lenght_key / 4, HEIGHT - 20))
+    for i in range(len(white_notes_label)):
+        pygame.draw.rect(screen, 'black', [10 + i * lenght_key, HEIGHT - height_key, lenght_key + 1, 300], 2, 2)
+        key_label = small_font.render(white_notes_label[i], True, 'black')
+        screen.blit(key_label, (10 + i * lenght_key + lenght_key / 4, HEIGHT - height_key*(1/6)))
         
     skip_count = 0
     last_skip = 3
     skip_track = 0
     black_rects = []
     
-    for i in range(len(black_flats)):
-        #this is to draw the small black rectangles on the larger keys in GUI Piano in Python
-        rect = pygame.draw.rect(screen, 'black', [10 + lenght_key/1.5 + (i * lenght_key) + (skip_count * lenght_key), HEIGHT - 300, lenght_key/1.4, 200], 0, 2)
+    for i in range(len(black_flats_label)):
+        rect = pygame.draw.rect(screen, 'black', [10 + lenght_key*(1/1.5 + i + skip_count), HEIGHT - height_key, lenght_key/1.4, height_key*2/3], 0, 2)
         black_rects.append(rect)
         
-        for q in range(len(blacks)):
-            #this conditional will keep thrack of the green marker that we want to show up on each key
-            #whenever a user pesses the key of Piano App in Python, a green marker should show up
-            if blacks[q][0] == i:
-                if blacks[q][1] > 0:
-                    pygame.draw.rect(screen, (96, 96, 96), [10 + lenght_key/1.5 + (i * lenght_key) + (skip_count * lenght_key), HEIGHT - 300, lenght_key/1.4, 200], 0, 2)
-                    pygame.draw.rect(screen, 'black', [10 + lenght_key/1.5 + (i * lenght_key) + (skip_count * lenght_key), HEIGHT - 300, lenght_key/1.4, 200], 2, 2)
-                    f.gradientRect(screen, 'white', (76, 153, 0), pygame.Rect(10 + lenght_key/1.5 + (i * lenght_key) + (skip_count * lenght_key), HEIGHT - 496, lenght_key/1.4, 196)) 
-                    blacks[q][1] -= 1
+        for q in range(len(active_blacks)):
+            if active_blacks[q][0] == i:
+                if active_blacks[q][1] > 0:
+                    pygame.draw.rect(screen, (96, 96, 96), [10 + lenght_key*(1/1.5 + i + skip_count), HEIGHT - height_key, lenght_key/1.4, height_key*2/3], 0, 2)
+                    pygame.draw.rect(screen, 'black', [10 + lenght_key*(1/1.5 + i + skip_count), HEIGHT - height_key, lenght_key/1.4, height_key*2/3], 2, 2)
+                    f.gradientRect(screen, 'white', (76, 153, 0), pygame.Rect(10 + lenght_key*(1/1.5 + i + skip_count), HEIGHT - (height_key*(8/5) -1), lenght_key/1.4, height_key*(3/5))) 
+                    active_blacks[q][1] -= 1
+                if len(active_blacks) > 10000:
+                    active_blacks.clear()
                     
-        key_label = real_small_font.render(black_flats[i], True, 'white')
-        screen.blit(key_label, (10 + lenght_key/1.5 + (i * lenght_key) + (skip_count * lenght_key) + (lenght_key/(4.5*1.5)), HEIGHT - 120))
+        key_label = real_small_font.render(black_flats_label[i], True, 'white')
+        screen.blit(key_label, (10 + lenght_key*(1/1.5 + i + skip_count + 1/(4.5*1.5)), HEIGHT - height_key*(1/2)))
         
         skip_track += 1
         if last_skip == 2 and skip_track == 3:
@@ -96,10 +102,112 @@ def draw_piano(whites, blacks):
             last_skip = 2
             skip_track = 0
             skip_count += 1
-            
+
+    return white_rects, black_rects, active_whites, active_blacks
+
+def draw_keyboard(active_white, active_black):
+    i = 0      
+    len_white = len(active_white)
+    
+    while i < len_white and len_white > 0:
+        if active_white[i][1] == 0:
+            active_white.pop(i)
+            len_white -= 1
+        elif active_white[i][1] > 0:
+            q = active_white[i][0]
+            if q == 0 or q == 6:
+                pygame.draw.rect(screen, 'gray', [WIDTH/2 + (white_button_list[q][1] - 7)*lenght_button, (5 - white_button_list[q][0])*height_button, lenght_button*(19/20) * 2, height_button*(4/5)], 0, 2)
+            elif q == 13:
+                pygame.draw.rect(screen, 'gray', [WIDTH/2 + (white_button_list[q][1] - 7)*lenght_button, (5 - white_button_list[q][0])*height_button, lenght_button*(19/20) * 1.5, height_button*(4/5)], 0, 2)
+            else: 
+                pygame.draw.rect(screen, 'gray', [WIDTH/2 + (white_button_list[q][1] - 7)*lenght_button, (5 - white_button_list[q][0])*height_button, lenght_button*(19/20) * 1, height_button*(4/5)], 0, 2)
+            active_white[i][1] -= 1
+        elif len(active_white) > 10000:
+            active_white.clear()
+        if i < len_white:
+            i += 1 
+    
+    i = 0      
+    len_black = len(active_black)
+    while i < len_black and len_black > 0:
+        if active_black[i][1] == 0:
+            active_black.pop(i)
+            len_black -= 1
+        elif active_black[i][1] > 0:
+            q = active_black[i][0]
+            pygame.draw.rect(screen, 'gray', [WIDTH/2 + (black_button_list[q][1] - 7)*lenght_button, (5 - black_button_list[q][0])*height_button, lenght_button*(19/20) * 1, height_button*(4/5)], 0, 2)
+            active_black[i][1] -= 1
+        elif len(active_black) > 10000:
+            active_black.clear()
+        if i < len_black:
+            i += 1  
+    key_count = 0
+    notes_count = 0
+    for i in range(5):
+        j = 0
+        while j <= 13:
+            if j == 3 and i == 0:
+                pygame.draw.rect(screen, 'black', [WIDTH/2 + (j - 7)*lenght_button, (5 - i)*height_button, lenght_button*(19/20) * 7.3, height_button*(4/5)], 1, 2)
+                key_label = button_font.render(button_label[key_count], True, 'black')
+                center = key_label.get_rect(center = (WIDTH/2 + (j - 7 + (19/40) * 7.3)*lenght_button , (5.4 - i)*height_button))
+                screen.blit(key_label, center)
+                j += 7
+                key_count += 1
+                
+            if (j == 0 or j == 12) and i == 1:
+                pygame.draw.rect(screen, 'black', [WIDTH/2 + (j - 7)*lenght_button, (5 - i)*height_button, lenght_button*(19/20) * 2, height_button*(4/5)], 1, 2)
+                key_label = button_font.render(button_label[key_count], True, 'black')
+                center = key_label.get_rect(center = (WIDTH/2 + (j - 7 + (19/20))*lenght_button , (5.2 - i)*height_button))
+                screen.blit(key_label, center)
+                
+                key_label = button_font.render(piano_notes_label[notes_count], True, 'black')
+                center = key_label.get_rect(center = (WIDTH/2 + (j - 7 + (19/20))*lenght_button , (5.6 - i)*height_button))
+                screen.blit(key_label, center)
+                key_count += 1
+                notes_count += 1
+                j += 2
+                
+            if (j == 0 or j == 12.5) and i ==2:
+                pygame.draw.rect(screen, 'black', [WIDTH/2 + (j - 7)*lenght_button, (5 - i)*height_button, lenght_button*(19/20) * 1.5, height_button*(4/5)], 1, 2)
+                
+                if key_count == 32:
+                    key_label = button_font.render(button_label[key_count], True, 'black')
+                    center = key_label.get_rect(center = (WIDTH/2 + (j - 7 + (19/40) * 1.5)*lenght_button , (5.2 - i)*height_button))
+                    screen.blit(key_label, center)
+                
+                    key_label = button_font.render(piano_notes_label[notes_count], True, 'black')
+                    center = key_label.get_rect(center = (WIDTH/2 + (j - 7 + (19/40) * 1.5)*lenght_button , (5.6 - i)*height_button))
+                    screen.blit(key_label, center)
+                    notes_count += 1
+                else:
+                    key_label = button_font.render(button_label[key_count], True, 'black')
+                    center = key_label.get_rect(center = (WIDTH/2 + (j - 7 + (19/40) * 1.5)*lenght_button , (5.4 - i)*height_button))
+                    screen.blit(key_label, center)
+                j += 1.5
+                key_count += 1
+
+            if j <= 13:
+                pygame.draw.rect(screen, 'black', [WIDTH/2 + (j - 7)*lenght_button, (5 - i)*height_button, lenght_button*(19/20), height_button*(4/5)], 1, 2)                 
+                
+                if key_count not in not_note_buttom:
+                    key_label = button_font.render(button_label[key_count], True, 'black')
+                    center = key_label.get_rect(center = (WIDTH/2 + (j - 6.5)*lenght_button , (5.2 - i)*height_button))
+                    screen.blit(key_label, center)
+                
+                    key_label = button_font.render(piano_notes_label[notes_count], True, 'black')
+                    center = key_label.get_rect(center = (WIDTH/2 + (j - 6.5)*lenght_button , (5.6 - i)*height_button))
+                    screen.blit(key_label, center)
+                    notes_count += 1
+                else:
+                    key_label = button_font.render(button_label[key_count], True, 'black')
+                    center = key_label.get_rect(center = (WIDTH/2 + (j - 6.5)*lenght_button , (5.4 - i)*height_button))
+                    screen.blit(key_label, center)
+                j += 1
+                key_count += 1
+    
     
 
-    return white_rects, black_rects, whites, blacks
+                
 
 #this will draw the upper section of Piano GUI In Python
 # def draw_title_bar():
@@ -120,6 +228,7 @@ while run:
     timer.tick(fps)
     screen.fill('white')
     white_keys, black_keys, active_whites, active_blacks = draw_piano(active_whites, active_blacks)
+    draw_keyboard(active_button_white, active_button_black)
     #draw_hands(right_oct, left_oct, right_hand, left_hand)
     #draw_title_bar()
     
@@ -132,6 +241,9 @@ while run:
             WIDTH = event.w
             HEIGHT = event.h
             lenght_key = (WIDTH - 20)/29
+            height_key = HEIGHT/4
+            lenght_button = WIDTH/20
+            height_button = HEIGHT/13.4
         
         if event.type == pygame.MOUSEBUTTONDOWN:
             black_key = False
@@ -140,24 +252,28 @@ while run:
                     black_sounds[i].play(0, 1500)
                     black_key = True
                     active_blacks.append([i, 30])
+                    active_button_black.append([i, 30])
+                    
                     
             for i in range(len(white_keys)):
                 if white_keys[i].collidepoint(event.pos) and not black_key:
                     white_sounds[i].play(0, 1500)
                     active_whites.append([i, 30])
+                    active_button_white.append([i, 30])
                 
         if event.type == pygame.KEYDOWN:
             if event.key in key_list:
-                if piano_notes2[str(event.key)] in black_flats:
-                    index = black_flats.index(piano_notes2[str(event.key)])
+                if piano_notes_key[str(event.key)] in black_flats_label:
+                    index = black_flats_label.index(piano_notes_key[str(event.key)])
                     black_sounds[index].play(0, 1000)
                     active_blacks.append([index, 30])
-                if piano_notes2[str(event.key)] in white_notes:
-                    index = white_notes.index(piano_notes2[str(event.key)])
+                    active_button_black.append([index, 30])
+                    
+                if piano_notes_key[str(event.key)] in white_notes_label:
+                    index = white_notes_label.index(piano_notes_key[str(event.key)])
                     white_sounds[index].play(0, 1000)
                     active_whites.append([index, 30])
-
-
+                    active_button_white.append([index, 30])
     pygame.display.flip()
 #this will quite the  window of the pygame 
 pygame.quit()
