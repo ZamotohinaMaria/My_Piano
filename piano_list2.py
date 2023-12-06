@@ -10,10 +10,10 @@ import pygame
 #                'Db4', 'Eb4', 'Gb4', 'Ab4', 'Bb4',
 #                'Db5', 'Eb5', 'Gb5', 'Ab5', 'Bb5']
 
-piano_notes = ['C2', 'Db2', 'D2', 'Eb2', 'E2', 'F2', 'Gb2', 'G2', 'Ab2', 'A2', 'Bb2', 'B2',
-               'C3', 'Db3', 'D3', 'Eb3', 'E3', 'F3', 'Gb3', 'G3', 'Ab3', 'A3', 'Bb3', 'B3',
-               'C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4',
-               'C5', 'Db5', 'D5', 'Eb5', 'E5', 'F5', 'Gb5', 'G5', 'Ab5', 'A5', 'Bb5', 'B5', 'C6']
+piano_notes = ['C2', 'D-2', 'D2', 'E-2', 'E2', 'F2', 'G-2', 'G2', 'A-2', 'A2', 'B-2', 'B2',
+               'C3', 'D-3', 'D3', 'E-3', 'E3', 'F3', 'G-3', 'G3', 'A-3', 'A3', 'B-3', 'B3',
+               'C4', 'D-4', 'D4', 'E-4', 'E4', 'F4', 'G-4', 'G4', 'A-4', 'A4', 'B-4', 'B4',
+               'C5', 'D-5', 'D5', 'E-5', 'E5', 'F5', 'G-5', 'G5', 'A-5', 'A5', 'B-5', 'B5', 'C6']
 
 white_notes = ['C2', 'D2', 'E2', 'F2', 'G2', 'A2', 'B2',
                'C3', 'D3', 'E3', 'F3', 'G3', 'A3', 'B3',
@@ -21,10 +21,10 @@ white_notes = ['C2', 'D2', 'E2', 'F2', 'G2', 'A2', 'B2',
                'C5', 'D5', 'E5', 'F5', 'G5', 'A5', 'B5',
                'C6']
 
-black_flats = ['Db2', 'Eb2', 'Gb2', 'Ab2', 'Bb2',
-               'Db3', 'Eb3', 'Gb3', 'Ab3', 'Bb3',
-               'Db4', 'Eb4', 'Gb4', 'Ab4', 'Bb4',
-               'Db5', 'Eb5', 'Gb5', 'Ab5', 'Bb5']
+black_flats = ['D-2', 'E-2', 'G-2', 'A-2', 'B-2',
+               'D-3', 'E-3', 'G-3', 'A-3', 'B-3',
+               'D-4', 'E-4', 'G-4', 'A-4', 'B-4',
+               'D-5', 'E-5', 'G-5', 'A-5', 'B-5']
 
 key_list = [pygame.K_PERIOD, pygame.K_SEMICOLON, pygame.K_p, pygame.K_0,
             pygame.K_COMMA, pygame.K_l, pygame.K_o, pygame.K_9,
@@ -74,23 +74,23 @@ button_list = ['Ctrl', 'Win', 'Alt', 'Space', 'Alt', 'Win', 'Meny', 'Ctrl',
 def get_notes_dict() -> dict:
     notes_dict = {
                  f'{pygame.K_PERIOD}': 'A2', f'{pygame.K_SEMICOLON}': 'A3', f'{pygame.K_p}': 'A4', f'{pygame.K_0}': 'A5',
-                 f'{pygame.K_COMMA}': 'Ab2', f'{pygame.K_l}': 'Ab3', f'{pygame.K_o}': 'Ab4', f'{pygame.K_9}': 'Ab5',
+                 f'{pygame.K_COMMA}': 'A-2', f'{pygame.K_l}': 'A-3', f'{pygame.K_o}': 'A-4', f'{pygame.K_9}': 'A-5',
 
                  f'{pygame.K_RSHIFT}': 'B2', f'{pygame.K_RETURN}': 'B3', f'{pygame.K_RIGHTBRACKET}': 'B4', f'{pygame.K_EQUALS}': 'B5',
-                 f'{pygame.K_SLASH}': 'Bb2', f'{pygame.K_QUOTE}': 'Bb3', f'{pygame.K_LEFTBRACKET}': 'Bb4', f'{pygame.K_MINUS}': 'Bb5',
+                 f'{pygame.K_SLASH}': 'B-2', f'{pygame.K_QUOTE}': 'B-3', f'{pygame.K_LEFTBRACKET}': 'B-4', f'{pygame.K_MINUS}': 'B-5',
                  
                  f'{pygame.K_LSHIFT}': 'C2', f'{pygame.K_a}': 'C3', f'{pygame.K_q}': 'C4', f'{pygame.K_1}': 'C5', f'{pygame.K_BACKSPACE}': 'C6',
                  
                  f'{pygame.K_x}': 'D2', f'{pygame.K_d}': 'D3', f'{pygame.K_e}': 'D4', f'{pygame.K_3}': 'D5',
-                 f'{pygame.K_z}': 'Db2', f'{pygame.K_s}': 'Db3', f'{pygame.K_w}': 'Db4', f'{pygame.K_2}': 'Db5',
+                 f'{pygame.K_z}': 'D-2', f'{pygame.K_s}': 'D-3', f'{pygame.K_w}': 'D-4', f'{pygame.K_2}': 'D-5',
                  
                  f'{pygame.K_v}': 'E2', f'{pygame.K_g}': 'E3', f'{pygame.K_t}': 'E4', f'{pygame.K_5}': 'E5',
-                 f'{pygame.K_c}': 'Eb2', f'{pygame.K_f}': 'Eb3', f'{pygame.K_r}': 'Eb4', f'{pygame.K_4}': 'Eb5',
+                 f'{pygame.K_c}': 'E-2', f'{pygame.K_f}': 'E-3', f'{pygame.K_r}': 'E-4', f'{pygame.K_4}': 'E-5',
                  
                  f'{pygame.K_b}': 'F2', f'{pygame.K_h}': 'F3', f'{pygame.K_y}': 'F4', f'{pygame.K_6}': 'F5',
                  
                  f'{pygame.K_m}': 'G2', f'{pygame.K_k}': 'G3', f'{pygame.K_i}': 'G4', f'{pygame.K_8}': 'G5',
-                 f'{pygame.K_n}': 'Gb2', f'{pygame.K_j}': 'Gb3', f'{pygame.K_u}': 'Gb4', f'{pygame.K_7}': 'Gb5'}
+                 f'{pygame.K_n}': 'G-2', f'{pygame.K_j}': 'G-3', f'{pygame.K_u}': 'G-4', f'{pygame.K_7}': 'G-5'}
     
     return notes_dict
     
