@@ -45,9 +45,7 @@ mins = 0
 curr_sec = 0
 
 mid = MidiFile()
-#track = MidiTrack()
-track = stream.Score()
-#while loop for all the keys
+track = MidiTrack()
 while run: 
     
     timer.tick(fps)
@@ -56,8 +54,6 @@ while run:
     f.draw_keyboard(active_button_white, active_button_black, screen, HEIGHT, WIDTH)
     btn_record, btn_stop_record = f.menu(screen, HEIGHT, WIDTH)
     curr_sec, sec, mins = f.record_timer(screen, HEIGHT, WIDTH, if_record, curr_sec, sec, mins)
-    #draw_hands(right_oct, left_oct, right_hand, left_hand)
-    #draw_title_bar()
     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -95,9 +91,8 @@ while run:
                 
             if btn_stop_record.collidepoint(event.pos):
                 if_record = False
-                # mid.tracks.append(track)
-                # mid.save('output.mid')
-                track.write('midi', fp='output.mid')
+                mid.tracks.append(track)
+                mid.save('output.mid')
                 track.clear()
                 
         if event.type == pygame.KEYDOWN:
@@ -105,25 +100,21 @@ while run:
                 if piano_notes_key[str(event.key)] in black_flats_label:
                     index = black_flats_label.index(piano_notes_key[str(event.key)])
                     black_sounds[index].play(0, 1000)
-                    #active_blacks.append([index, 30, midi_notes[piano_notes_key[str(event.key)]]])
-                    active_blacks.append([index, 30, piano_notes_key[str(event.key)], 0])
+                    active_blacks.append([index, 30, midi_notes[piano_notes_key[str(event.key)]]])
                     
                     active_button_black.append([index, 30])
                     if if_record == True:
-                        active_blacks[len(active_blacks) - 1][3] = time.time()
-                        #track.append(mido.Message('note_on', note=midi_notes[piano_notes_key[str(event.key)]], velocity=64, time=round((sec + time.time() % 1 + mins * 60 ) * 80)))
+                        track.append(mido.Message('note_on', note=midi_notes[piano_notes_key[str(event.key)]], velocity=64, time=round((sec + time.time() % 1 + mins * 60 ) * 100)))
 
                 
                 if piano_notes_key[str(event.key)] in white_notes_label:
                     index = white_notes_label.index(piano_notes_key[str(event.key)])
                     white_sounds[index].play(0, 1000)
-                    #active_whites.append([index, 30, midi_notes[piano_notes_key[str(event.key)]]])
-                    active_whites.append([index, 30, piano_notes_key[str(event.key)], 0])
+                    active_whites.append([index, 30, midi_notes[piano_notes_key[str(event.key)]]])
                 
                     active_button_white.append([index, 30])
                     if if_record == True:
-                        active_whites[len(active_whites) - 1][3] = time.time()
-                        #track.append(mido.Message('note_on', note=midi_notes[piano_notes_key[str(event.key)]], velocity=64, time=round((sec + time.time() % 1 + mins * 60) * 80)))
+                        track.append(mido.Message('note_on', note=midi_notes[piano_notes_key[str(event.key)]], velocity=64, time=round((sec + time.time() % 1 + mins * 60) * 100)))
 
 
     pygame.display.flip()

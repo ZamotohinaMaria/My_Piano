@@ -60,8 +60,7 @@ def draw_piano(active_whites, active_blacks, screen, HEIGHT, WIDTH, track, sec, 
     len_white = len(active_whites)
     while i < len_white and len_white > 0:
         if active_whites[i][1] == 0:
-            #track.append(mido.Message('note_off', note=active_whites[i][2], velocity=64, time=round((sec + time.time() % 1 + mins * 60) * 100)))
-            track.append(note.Note(active_whites[i][2], duration = duration.Duration(time.time() - active_whites[i][3])))
+            track.append(mido.Message('note_off', note=active_whites[i][2], velocity=64, time=round((sec + time.time() % 1 + mins * 60) * 100)))
             active_whites.pop(i)
             len_white -= 1
         elif active_whites[i][1] > 0:
@@ -93,8 +92,7 @@ def draw_piano(active_whites, active_blacks, screen, HEIGHT, WIDTH, track, sec, 
         while q < len_black and len_black > 0:
             if active_blacks[q][0] == i:
                 if active_blacks[q][1] == 0: 
-                    #track.append(mido.Message('note_off', note=active_blacks[q][2], velocity=64, time=round((sec + time.time() % 1 + mins * 60) * 100)))
-                    track.append(note.Note(active_blacks[q][2], duration = duration.Duration(time.time() - active_blacks[q][3])))
+                    track.append(mido.Message('note_off', note=active_blacks[q][2], velocity=64, time=round((sec + time.time() % 1 + mins * 60) * 100)))
                     active_blacks.pop(q)
                     len_black -= 1
                 elif active_blacks[q][1] > 0:
