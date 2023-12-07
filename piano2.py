@@ -4,6 +4,10 @@ import pygame
 import piano_lists as pl
 import piano_list2 as pl2
 import functions as f
+import mido
+from mido import MidiFile, MidiTrack
+import time
+from music21 import note, stream, duration
 
 pygame.init()
 pygame.mixer.set_num_channels(50)
@@ -28,6 +32,7 @@ key_list = pl2.key_list
 piano_notes_key = pl2.get_notes_dict()
 white_notes_label = pl2.white_notes
 black_flats_label = pl2.black_flats
+midi_notes = pl2.midi_notes
 
 white_sounds, black_sounds = f.get_sounds(white_notes_label, black_flats_label)
 
@@ -37,16 +42,20 @@ run = True
 if_record = False
 sec =0
 mins = 0
+curr_sec = 0
+
+mid = MidiFile()
+#track = MidiTrack()
 track = stream.Score()
 #while loop for all the keys
 while run: 
     
     timer.tick(fps)
     screen.fill('white')
-    white_keys, black_keys, active_whites, active_blacks = f.draw_piano(active_whites, active_blacks, screen, HEIGHT, WIDTH)
+    white_keys, black_keys, active_whites, active_blacks = f.draw_piano(active_whites, active_blacks, screen, HEIGHT, WIDTH, track, sec, mins)
     f.draw_keyboard(active_button_white, active_button_black, screen, HEIGHT, WIDTH)
     btn_record, btn_stop_record = f.menu(screen, HEIGHT, WIDTH)
-    sec, mins = f.record_timer(screen, HEIGHT, WIDTH, if_record, sec, mins)
+    curr_sec, sec, mins = f.record_timer(screen, HEIGHT, WIDTH, if_record, curr_sec, sec, mins)
     #draw_hands(right_oct, left_oct, right_hand, left_hand)
     #draw_title_bar()
     
@@ -80,33 +89,43 @@ while run:
             
             if btn_record.collidepoint(event.pos):
                 if_record = True
-                sec =0
+                curr_sec = time.time()//1
+                sec = 0
                 mins = 0
                 
             if btn_stop_record.collidepoint(event.pos):
                 if_record = False
-                track.write('midi', fp='my_music.mid')
+                # mid.tracks.append(track)
+                # mid.save('output.mid')
+                track.write('midi', fp='output.mid')
+                track.clear()
                 
         if event.type == pygame.KEYDOWN:
             if event.key in key_list:
                 if piano_notes_key[str(event.key)] in black_flats_label:
-                    print(piano_notes_key[str(event.key)])
                     index = black_flats_label.index(piano_notes_key[str(event.key)])
                     black_sounds[index].play(0, 1000)
-                    active_blacks.append([index, 30])
+                    #active_blacks.append([index, 30, midi_notes[piano_notes_key[str(event.key)]]])
+                    active_blacks.append([index, 30, piano_notes_key[str(event.key)], 0])
+                    
                     active_button_black.append([index, 30])
                     if if_record == True:
-                        print()
-                    
+                        active_blacks[len(active_blacks) - 1][3] = time.time()
+                        #track.append(mido.Message('note_on', note=midi_notes[piano_notes_key[str(event.key)]], velocity=64, time=round((sec + time.time() % 1 + mins * 60 ) * 80)))
+
+                
                 if piano_notes_key[str(event.key)] in white_notes_label:
                     index = white_notes_label.index(piano_notes_key[str(event.key)])
                     white_sounds[index].play(0, 1000)
-                    active_whites.append([index, 30])
+                    #active_whites.append([index, 30, midi_notes[piano_notes_key[str(event.key)]]])
+                    active_whites.append([index, 30, piano_notes_key[str(event.key)], 0])
+                
                     active_button_white.append([index, 30])
                     if if_record == True:
-                        print()
-                
-            
+                        active_whites[len(active_whites) - 1][3] = time.time()
+                        #track.append(mido.Message('note_on', note=midi_notes[piano_notes_key[str(event.key)]], velocity=64, time=round((sec + time.time() % 1 + mins * 60) * 80)))
+
+
     pygame.display.flip()
 #this will quite the  window of the pygame 
 pygame.quit()

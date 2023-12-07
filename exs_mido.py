@@ -1,10 +1,27 @@
 import mido
+from mido import MidiFile, MidiTrack
 
-# Создание сообщения для ноты
-note_on = mido.Message('note_on', note=60, velocity=64, time=40)
+mid = MidiFile()
+track = MidiTrack()
+mid.tracks.append(track)
 
-# Воспроизведение ноты
-print(mido.get_output_names())
-port = mido.open_output('Microsoft GS Wavetable Synth 0')
-port.send(note_on)
-note_on = mido.Message('note_off', note=60, velocity=64, time=600)
+track.append(mido.Message('note_on', note=60, velocity=64, time=500))
+track.append(mido.Message('note_off', note=60, velocity=64, time=500))
+track.append(mido.Message('note_on', note=70, velocity=64, time=500))
+track.append(mido.Message('note_off', note=70, velocity=64, time=500))
+mid.save('output.mid')
+
+import pygame
+import time
+# pygame.init()
+# pygame.mixer.init()
+# pygame.mixer.music.load("output.mid")
+# pygame.mixer.music.play()
+# while pygame.mixer.music.get_busy():
+#     time.sleep(1)
+    
+t = time.localtime()
+while True:
+    print(time.time()%1)
+cuurent_time = time.strftime("%H:%M:%S", t)
+print(cuurent_time[0])

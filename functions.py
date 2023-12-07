@@ -1,6 +1,9 @@
 import pygame
 from pygame import mixer
 import piano_list2 as pl2
+import time
+import mido
+from music21 import note, stream, duration
 
 pygame.init()
 font = pygame.font.Font('assets/timesnrcyrmt.ttf', 48)
@@ -42,7 +45,7 @@ def gradientRect( window, left_colour, right_colour, target_rect ):
     window.blit( colour_rect, target_rect )                                    # paint it
     
     
-def draw_piano(active_whites, active_blacks, screen, HEIGHT, WIDTH):
+def draw_piano(active_whites, active_blacks, screen, HEIGHT, WIDTH, track, sec, mins):
     lenght_key = (WIDTH - 20)/29
     height_key = HEIGHT/4
     
@@ -57,6 +60,8 @@ def draw_piano(active_whites, active_blacks, screen, HEIGHT, WIDTH):
     len_white = len(active_whites)
     while i < len_white and len_white > 0:
         if active_whites[i][1] == 0:
+            #track.append(mido.Message('note_off', note=active_whites[i][2], velocity=64, time=round((sec + time.time() % 1 + mins * 60) * 100)))
+            track.append(note.Note(active_whites[i][2], duration = duration.Duration(time.time() - active_whites[i][3])))
             active_whites.pop(i)
             len_white -= 1
         elif active_whites[i][1] > 0:
@@ -87,7 +92,9 @@ def draw_piano(active_whites, active_blacks, screen, HEIGHT, WIDTH):
         len_black = len(active_blacks)
         while q < len_black and len_black > 0:
             if active_blacks[q][0] == i:
-                if active_blacks[q][1] == 0:
+                if active_blacks[q][1] == 0: 
+                    #track.append(mido.Message('note_off', note=active_blacks[q][2], velocity=64, time=round((sec + time.time() % 1 + mins * 60) * 100)))
+                    track.append(note.Note(active_blacks[q][2], duration = duration.Duration(time.time() - active_blacks[q][3])))
                     active_blacks.pop(q)
                     len_black -= 1
                 elif active_blacks[q][1] > 0:
@@ -236,16 +243,17 @@ def menu(screen, HEIGHT, WIDTH):
     
     return btn_record, btn_stop_record
 
-def record_timer(screen, HEIGHT, WIDTH, if_record, sec, mins):
+def record_timer(screen, HEIGHT, WIDTH, if_record, curr_sec, sec, mins):
     if if_record == True:
         pygame.draw.rect(screen, 'red', [WIDTH*(9/20) , HEIGHT*(7/40), WIDTH/10, HEIGHT/20], 1, 2) 
         record_time = medium_font.render('{}:{}'.format(mins, sec), True, 'red')
         record_rect = record_time.get_rect(center = (WIDTH*(1/2), HEIGHT*(4/20)))
-        clock.tick(1)
-        sec += 1
+        if (curr_sec - time.time()//1) != 0: 
+            curr_sec = time.time()//1
+            sec += 1
         screen.blit(record_time, record_rect)
         if sec > 60:
             sec = 0
             mins += 1
-    return sec, mins
+    return curr_sec, sec, mins
                 
