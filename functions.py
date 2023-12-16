@@ -7,7 +7,7 @@ from music21 import note, stream, duration
 
 pygame.init()
 font = pygame.font.Font('assets/timesnrcyrmt.ttf', 48)
-medium_font = pygame.font.Font('assets/timesnrcyrmt_bold.ttf', 28)
+medium_font = pygame.font.Font('assets/timesnrcyrmt_bold.ttf', 24)
 small_font = pygame.font.Font('assets/timesnrcyrmt_inclined.ttf', 16)
 button_font = pygame.font.Font('assets/timesnrcyrmt.ttf', 14)
 real_small_font = pygame.font.Font('assets/timesnrcyrmt.ttf', 10)
@@ -60,7 +60,8 @@ def draw_piano(active_whites, active_blacks, screen, HEIGHT, WIDTH, track, sec, 
     len_white = len(active_whites)
     while i < len_white and len_white > 0:
         if active_whites[i][1] == 0:
-            track.append(mido.Message('note_off', note=active_whites[i][2], velocity=64, time=round((sec + time.time() % 1 + mins * 60) * 100)))
+            if active_whites[i][3] == 1:
+                track.append(mido.Message('note_off', note=active_whites[i][2], velocity=64, time=round((sec + time.time() % 1 + mins * 60) * 65)))
             active_whites.pop(i)
             len_white -= 1
         elif active_whites[i][1] > 0:
@@ -92,7 +93,8 @@ def draw_piano(active_whites, active_blacks, screen, HEIGHT, WIDTH, track, sec, 
         while q < len_black and len_black > 0:
             if active_blacks[q][0] == i:
                 if active_blacks[q][1] == 0: 
-                    track.append(mido.Message('note_off', note=active_blacks[q][2], velocity=64, time=round((sec + time.time() % 1 + mins * 60) * 100)))
+                    if active_blacks[q][3] == 1:
+                        track.append(mido.Message('note_off', note=active_blacks[q][2], velocity=64, time=round((sec + time.time() % 1 + mins * 60) * 65)))
                     active_blacks.pop(q)
                     len_black -= 1
                 elif active_blacks[q][1] > 0:
@@ -228,18 +230,29 @@ def draw_keyboard(active_white, active_black, screen, HEIGHT, WIDTH):
    
     
 def menu(screen, HEIGHT, WIDTH):
-    pygame.draw.rect(screen, '#e3e3e3', [0, 0, WIDTH, HEIGHT/10], 0, 2) 
-    btn_record = pygame.draw.rect(screen, 'black', [WIDTH/30, HEIGHT*(1/60), WIDTH*(5/20), HEIGHT*(1/15)], 1, 2)
+    pygame.draw.rect(screen, '#e3e3e3', [0, 0, WIDTH, HEIGHT/15], 0, 2) 
+    
+    btn_record = pygame.draw.rect(screen, 'black', [WIDTH/30, HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20)], 1, 2)
     key_label = medium_font.render('Начать запись', True, 'black')
-    center = key_label.get_rect(center = (WIDTH/30 + WIDTH*(5/20)/2, HEIGHT*(1/60) + HEIGHT*(1/15)/2))
+    center = key_label.get_rect(center = (WIDTH/30 + WIDTH*(5/62), HEIGHT*(1/120) + HEIGHT*(1/20)/2))
     screen.blit(key_label, center) 
     
-    btn_stop_record = pygame.draw.rect(screen, 'black', [WIDTH/30 + WIDTH*(6/20), HEIGHT*(1/60), WIDTH*(5/20), HEIGHT*(1/15)], 1, 2)
+    btn_stop_record = pygame.draw.rect(screen, 'black', [WIDTH*(7/31), HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20)], 1, 2)
     key_label = medium_font.render('Остановить запись', True, 'black')
-    center = key_label.get_rect(center = (WIDTH/30 + WIDTH*(6/20) + WIDTH*(5/20)/2, HEIGHT*(1/60) + HEIGHT*(1/15)/2))
+    center = key_label.get_rect(center = (WIDTH*(7/31) + WIDTH*(5/62), HEIGHT*(1/120) + HEIGHT*(1/20)/2))
     screen.blit(key_label, center) 
     
-    return btn_record, btn_stop_record
+    btn_play_music = pygame.draw.rect(screen, 'black', [WIDTH*(13/31), HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20)], 1, 2)
+    key_label = medium_font.render('Воспроизвести музыку', True, 'black')
+    center = key_label.get_rect(center = (WIDTH*(13/31) + WIDTH*(5/62), HEIGHT*(1/120) + HEIGHT*(1/20)/2))
+    screen.blit(key_label, center) 
+    
+    btn_stop_music = pygame.draw.rect(screen, 'black', [WIDTH*(19/31), HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20)], 1, 2)
+    key_label = medium_font.render('Остановить музыку', True, 'black')
+    center = key_label.get_rect(center = (WIDTH*(19/31) + WIDTH*(5/62), HEIGHT*(1/120) + HEIGHT*(1/20)/2))
+    screen.blit(key_label, center) 
+    
+    return btn_record, btn_stop_record, btn_play_music, btn_stop_music
 
 def record_timer(screen, HEIGHT, WIDTH, if_record, curr_sec, sec, mins):
     if if_record == True:
@@ -255,3 +268,8 @@ def record_timer(screen, HEIGHT, WIDTH, if_record, curr_sec, sec, mins):
             mins += 1
     return curr_sec, sec, mins
                 
+def warning_text(screen, HEIGHT, WIDTH, if_draw):
+    if if_draw == 1:
+        return 1
+    return 1
+    
