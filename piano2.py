@@ -1,8 +1,8 @@
-# ПОРАБОТАТЬ НАД ВТОРОЙ РАСКЛАДКОЙ, ДРУГИМ ВИДОМ И ПРОКРУТКОЙ
-# В БУДУЩЕМ - ЗАЩИЩЕННОСТЬ (ФЛЕШКА И КЛЮЧ), ЦВЕТОВАЯ ТЕМА, УЧИТЬСЯ ИГРАТЬ
 import pygame
 import pygame_widgets
 from pygame_widgets.button import Button
+from pygame_widgets.dropdown import Dropdown
+
 import piano_lists as pl
 import piano_list2 as pl2
 import functions as f
@@ -28,6 +28,7 @@ active_button_white = []
 active_button_black = []
 
 fps = 60
+key_learn = None
 
 key_list = pl2.key_list
 
@@ -46,35 +47,80 @@ sec =0
 mins = 0
 curr_sec = 0
 
-btn = Button(
-    # Mandatory Parameters
-    screen,  # Surface to place button on
-    100,  # X-coordinate of top left corner
-    100,  # Y-coordinate of top left corner
-    300,  # Width
-    150,  # Height
+lock_image = pygame.image.load('lock.png')
+lock_image = pygame.transform.scale(lock_image, (20, 20))
 
-    # Optional Parameters
-    text='Hello',  # Text to display
-    fontSize=50,  # Size of font
-    margin=20,  # Minimum distance between text/image and edge of button
-    inactiveColour=(200, 50, 0),  # Colour of button when not being interacted with
-    hoverColour=(150, 0, 0),  # Colour of button when being hovered over
-    pressedColour=(0, 200, 20),  # Colour of button when being clicked
-    radius=20,  # Radius of border corners (leave empty for not curved)
-    onClick=lambda: print('Click')  # Function to call when clicked on
+btn_record = Button(
+    screen, WIDTH/30, HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20),
+
+    text='Начать запись', 
+    fontSize=50, 
+    font = pygame.font.Font('assets/timesnrcyrmt_bold.ttf', 24),
+    inactiveColour=(150, 150, 255), 
+    hoverColour=(110, 110, 255), 
+    pressedColour=(160, 160, 255), 
+    radius=7
+)
+
+btn_stop_record = Button(
+    screen, WIDTH*(7/31), HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20),
+
+    text='Остановить запись', 
+    fontSize=50, 
+    font = pygame.font.Font('assets/timesnrcyrmt_bold.ttf', 24),
+    inactiveColour=(150, 150, 255), 
+    hoverColour=(110, 110, 255), 
+    pressedColour=(160, 160, 255), 
+    radius=7
+)
+
+btn_play_music = Button(
+    screen, WIDTH*(13/31), HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20), 
+
+    text='Воспроизвести музыку', 
+    fontSize=50, 
+    font = pygame.font.Font('assets/timesnrcyrmt_bold.ttf', 24),
+    inactiveColour=(150, 150, 255), 
+    hoverColour=(110, 110, 255), 
+    pressedColour=(160, 160, 255), 
+    radius=7
+)
+
+btn_stop_music = Button(
+    screen, WIDTH*(19/31), HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20), 
+
+    text='Остановить музыку',  
+    fontSize=50,  
+    font = pygame.font.Font('assets/timesnrcyrmt_bold.ttf', 24),
+    inactiveColour=(150, 150, 255), 
+    hoverColour=(110, 110, 255), 
+    pressedColour=(160, 160, 255), 
+    radius=7
+)
+
+drop_learn_samples = Dropdown(
+    screen, WIDTH*(25/31), HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20), name='Играть по нотам',
+    choices=[
+        'ABBA',
+        'Конь',
+        'Кукла колдуна',
+    ],
+    font = pygame.font.Font('assets/timesnrcyrmt_bold.ttf', 24),
+    borderRadius=7, 
+    colour=(150, 150, 255), values=[1, 2, 2], direction='down'
 )
 
 mid = MidiFile()
 track = MidiTrack()
 while run: 
     timer.tick(fps)
-    screen.fill('white')
+    screen.fill('#F5F5FF')
+
     white_keys, black_keys, active_whites, active_blacks = f.draw_piano(active_whites, active_blacks, screen, HEIGHT, WIDTH, track, sec, mins)
     f.draw_keyboard(active_button_white, active_button_black, screen, HEIGHT, WIDTH)
-    pygame.draw.rect(screen, '#e3e3e3', [0, 0, WIDTH, HEIGHT/15], 0, 2) 
+    pygame.draw.rect(screen, '#CCCCFF', [0, 0, WIDTH, HEIGHT/15], 0, 2) 
     
-    btn_record, btn_stop_record, btn_play_music, btn_stop_music = f.menu(screen, HEIGHT, WIDTH)
+    #btn_record, btn_stop_record, btn_play_music, btn_stop_music = f.menu(screen, HEIGHT, WIDTH)
     curr_sec, sec, mins = f.record_timer(screen, HEIGHT, WIDTH, if_record, curr_sec, sec, mins)
     
     events = pygame.event.get()
@@ -115,29 +161,37 @@ while run:
                     else:
                         active_whites.append([i, 30, midi_notes[white_notes_label[i]], 0])
 
+        if btn_record.clicked == True:
+            print(btn_record.clicked)
+            if_record = True
+            curr_sec = time.time()//1
+            sec = 0
+            mins = 0
             
-            if btn_record.collidepoint(event.pos):
-                if_record = True
-                curr_sec = time.time()//1
-                sec = 0
-                mins = 0
-                
-            if btn_stop_record.collidepoint(event.pos):
-                if_record = False
-                mid.tracks.append(track)
-                mid.save('output.mid')
-                track.clear()
-                
-            if btn_play_music.collidepoint(event.pos):
-                if_record = False
-                mid.tracks.append(track)
-                mid.save('output.mid')
-                pygame.mixer.music.load("output.mid")
-                pygame.mixer.music.play()
+        if btn_stop_record.clicked == True:
+            if_record = False
+            mid.tracks.append(track)
+            mid.save('output.mid')
+            track.clear()
             
-            if btn_stop_music.collidepoint(event.pos):
-                pygame.mixer.music.stop()
-                
+        if btn_play_music.clicked == True:
+            if_record = False
+            mid.tracks.append(track)
+            mid.save('output.mid')
+            pygame.mixer.music.load("output.mid")
+            pygame.mixer.music.play()
+        
+        if btn_stop_music.clicked == True:
+            pygame.mixer.music.stop()
+
+
+        if drop_learn_samples.getSelected() == 1:
+            print('Abba')
+        if drop_learn_samples.getSelected() == 2:
+            print('Konb')
+        if drop_learn_samples.getSelected() == 3:
+            print('KISH')
+
         if event.type == pygame.KEYDOWN:
             if event.key in key_list:
                 if piano_notes_key[str(event.key)] in black_flats_label:
@@ -163,6 +217,7 @@ while run:
                         active_whites.append([index, 30, midi_notes[piano_notes_key[str(event.key)]], 0])
                         
     pygame_widgets.update(events)
+    screen.blit(lock_image, (WIDTH*(25/31), HEIGHT*(1/120)))
     pygame.display.flip()
 #this will quite the  window of the pygame 
 pygame.quit()

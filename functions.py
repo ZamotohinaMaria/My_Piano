@@ -3,6 +3,7 @@ from pygame import mixer
 import piano_list2 as pl2
 import time
 import mido
+from cryptography.fernet import Fernet
 from music21 import note, stream, duration
 
 pygame.init()
@@ -10,7 +11,7 @@ font = pygame.font.Font('assets/timesnrcyrmt.ttf', 48)
 medium_font = pygame.font.Font('assets/timesnrcyrmt_bold.ttf', 24)
 small_font = pygame.font.Font('assets/timesnrcyrmt_inclined.ttf', 16)
 button_font = pygame.font.Font('assets/timesnrcyrmt.ttf', 14)
-real_small_font = pygame.font.Font('assets/timesnrcyrmt.ttf', 10)
+real_small_font = pygame.font.Font('assets/timesnrcyrmt.ttf', 12)
 
 button_label = pl2.button_list
 piano_notes_label = pl2.piano_notes
@@ -27,11 +28,17 @@ clock = pygame.time.Clock()
 def get_sounds(white_notes :list, black_flats :list) -> tuple:
     white_sounds = []
     for i in range(len(white_notes)):
-        white_sounds.append(mixer.Sound(f'assets\\notes\\{white_notes[i]}.wav'))
-
+        try:
+            white_sounds.append(mixer.Sound(f'assets\\notes\\{white_notes[i]}.wav'))
+        except IOError:
+            print('File error')
+        
     black_sounds = []
     for i in range(len(black_flats)):
-        black_sounds.append(mixer.Sound(f'assets\\notes\\{black_flats[i]}.wav'))
+        try:
+            black_sounds.append(mixer.Sound(f'assets\\notes\\{black_flats[i]}.wav'))
+        except IOError:
+            print('File error')
         
     return white_sounds, black_sounds
 
@@ -53,6 +60,7 @@ def draw_piano(active_whites, active_blacks, screen, HEIGHT, WIDTH, track, sec, 
     
     white_rects = []
     for i in range(len(white_notes_label)):
+        rect = pygame.draw.rect(screen, 'white', [10 + i * lenght_key, HEIGHT - height_key, lenght_key, height_key], 0, 2)
         rect = pygame.draw.rect(screen, 'white', [10 + i * lenght_key, HEIGHT - height_key, lenght_key, height_key], 2, 2)
         white_rects.append(rect)      
         
@@ -66,8 +74,8 @@ def draw_piano(active_whites, active_blacks, screen, HEIGHT, WIDTH, track, sec, 
             len_white -= 1
         elif active_whites[i][1] > 0:
             j = active_whites[i][0]
-            pygame.draw.rect(screen, 'gray', [10 + j * lenght_key, HEIGHT - height_key, lenght_key, height_key], 0, 2)
-            gradientRect(screen, 'white', (204, 255, 153), pygame.Rect(10 + j * lenght_key, HEIGHT - (height_key*(7/5) - 1), lenght_key, height_key*(2/5))) 
+            pygame.draw.rect(screen, (204, 204, 255), [10 + j * lenght_key, HEIGHT - height_key, lenght_key, height_key], 0, 2)
+            gradientRect(screen, (240, 240, 255), (204, 204, 255), pygame.Rect(10 + j * lenght_key, HEIGHT - (height_key*(7/5) - 1), lenght_key, height_key*(2/5))) 
             active_whites[i][1] -= 1
         if len(active_whites) > 10000:
             active_whites.clear()
@@ -98,9 +106,9 @@ def draw_piano(active_whites, active_blacks, screen, HEIGHT, WIDTH, track, sec, 
                     active_blacks.pop(q)
                     len_black -= 1
                 elif active_blacks[q][1] > 0:
-                    pygame.draw.rect(screen, (96, 96, 96), [10 + lenght_key*(1/1.5 + i + skip_count), HEIGHT - height_key, lenght_key/1.4, height_key*2/3], 0, 2)
+                    pygame.draw.rect(screen, (130, 130, 255), [10 + lenght_key*(1/1.5 + i + skip_count), HEIGHT - height_key, lenght_key/1.4, height_key*2/3], 0, 2)
                     pygame.draw.rect(screen, 'black', [10 + lenght_key*(1/1.5 + i + skip_count), HEIGHT - height_key, lenght_key/1.4, height_key*2/3], 2, 2)
-                    gradientRect(screen, 'white', (76, 153, 0), pygame.Rect(10 + lenght_key*(1/1.5 + i + skip_count), HEIGHT - (height_key*(7/5) -1), lenght_key/1.4, height_key*(2/5))) 
+                    gradientRect(screen, (245, 245, 255), (130, 130, 255), pygame.Rect(10 + lenght_key*(1/1.5 + i + skip_count), HEIGHT - (height_key*(7/5) -1), lenght_key/1.4, height_key*(2/5))) 
                     active_blacks[q][1] -= 1
                 if len(active_blacks) > 10000:
                     active_blacks.clear()
@@ -139,11 +147,11 @@ def draw_keyboard(active_white, active_black, screen, HEIGHT, WIDTH):
         elif active_white[i][1] > 0:
             q = active_white[i][0]
             if q == 0 or q == 6:
-                pygame.draw.rect(screen, 'gray', [WIDTH/2 + (white_button_list[q][1] - 7)*lenght_button, (height_place - white_button_list[q][0])*height_button, lenght_button*(19/20) * 2, height_button*(4/5)], 0, 2)
+                pygame.draw.rect(screen, '#CCCCFF', [WIDTH/2 + (white_button_list[q][1] - 7)*lenght_button, (height_place - white_button_list[q][0])*height_button, lenght_button*(19/20) * 2, height_button*(4/5)], 0, 2)
             elif q == 13:
-                pygame.draw.rect(screen, 'gray', [WIDTH/2 + (white_button_list[q][1] - 7)*lenght_button, (height_place - white_button_list[q][0])*height_button, lenght_button*(19/20) * 1.5, height_button*(4/5)], 0, 2)
+                pygame.draw.rect(screen, '#CCCCFF', [WIDTH/2 + (white_button_list[q][1] - 7)*lenght_button, (height_place - white_button_list[q][0])*height_button, lenght_button*(19/20) * 1.5, height_button*(4/5)], 0, 2)
             else: 
-                pygame.draw.rect(screen, 'gray', [WIDTH/2 + (white_button_list[q][1] - 7)*lenght_button, (height_place - white_button_list[q][0])*height_button, lenght_button*(19/20) * 1, height_button*(4/5)], 0, 2)
+                pygame.draw.rect(screen, '#CCCCFF', [WIDTH/2 + (white_button_list[q][1] - 7)*lenght_button, (height_place - white_button_list[q][0])*height_button, lenght_button*(19/20) * 1, height_button*(4/5)], 0, 2)
             active_white[i][1] -= 1
         elif len(active_white) > 10000:
             active_white.clear()
@@ -158,7 +166,7 @@ def draw_keyboard(active_white, active_black, screen, HEIGHT, WIDTH):
             len_black -= 1
         elif active_black[i][1] > 0:
             q = active_black[i][0]
-            pygame.draw.rect(screen, 'gray', [WIDTH/2 + (black_button_list[q][1] - 7)*lenght_button, (height_place - black_button_list[q][0])*height_button, lenght_button*(19/20) * 1, height_button*(4/5)], 0, 2)
+            pygame.draw.rect(screen, '#CCCCFF', [WIDTH/2 + (black_button_list[q][1] - 7)*lenght_button, (height_place - black_button_list[q][0])*height_button, lenght_button*(19/20) * 1, height_button*(4/5)], 0, 2)
             active_black[i][1] -= 1
         elif len(active_black) > 10000:
             active_black.clear()
@@ -268,8 +276,6 @@ def record_timer(screen, HEIGHT, WIDTH, if_record, curr_sec, sec, mins):
             mins += 1
     return curr_sec, sec, mins
                 
-def warning_text(screen, HEIGHT, WIDTH, if_draw):
-    if if_draw == 1:
-        return 1
-    return 1
-    
+def choise_sample():
+    print()
+      
