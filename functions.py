@@ -69,7 +69,7 @@ def draw_piano(active_whites, active_blacks, screen, HEIGHT, WIDTH, track, sec, 
     while i < len_white and len_white > 0:
         if active_whites[i][1] == 0:
             if active_whites[i][3] == 1:
-                track.append(mido.Message('note_off', note=active_whites[i][2], velocity=64, time=round((sec + time.time() % 1 + mins * 60) * 65)))
+                track.append(mido.Message('note_off', note=active_whites[i][2], velocity=100, time=round((sec + time.time() % 1 + mins * 60) * 65)))
             active_whites.pop(i)
             len_white -= 1
         elif active_whites[i][1] > 0:
@@ -102,7 +102,7 @@ def draw_piano(active_whites, active_blacks, screen, HEIGHT, WIDTH, track, sec, 
             if active_blacks[q][0] == i:
                 if active_blacks[q][1] == 0: 
                     if active_blacks[q][3] == 1:
-                        track.append(mido.Message('note_off', note=active_blacks[q][2], velocity=64, time=round((sec + time.time() % 1 + mins * 60) * 65)))
+                        track.append(mido.Message('note_off', note=active_blacks[q][2], velocity=100, time=round((sec + time.time() % 1 + mins * 60) * 65)))
                     active_blacks.pop(q)
                     len_black -= 1
                 elif active_blacks[q][1] > 0:
@@ -237,30 +237,30 @@ def draw_keyboard(active_white, active_black, screen, HEIGHT, WIDTH):
                 key_count += 1
    
     
-def menu(screen, HEIGHT, WIDTH):
-    pygame.draw.rect(screen, '#e3e3e3', [0, 0, WIDTH, HEIGHT/15], 0, 2) 
+# def menu(screen, HEIGHT, WIDTH):
+#     pygame.draw.rect(screen, '#e3e3e3', [0, 0, WIDTH, HEIGHT/15], 0, 2) 
     
-    btn_record = pygame.draw.rect(screen, 'black', [WIDTH/30, HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20)], 1, 2)
-    key_label = medium_font.render('Начать запись', True, 'black')
-    center = key_label.get_rect(center = (WIDTH/30 + WIDTH*(5/62), HEIGHT*(1/120) + HEIGHT*(1/20)/2))
-    screen.blit(key_label, center) 
+#     btn_record = pygame.draw.rect(screen, 'black', [WIDTH/30, HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20)], 1, 2)
+#     key_label = medium_font.render('Начать запись', True, 'black')
+#     center = key_label.get_rect(center = (WIDTH/30 + WIDTH*(5/62), HEIGHT*(1/120) + HEIGHT*(1/20)/2))
+#     screen.blit(key_label, center) 
     
-    btn_stop_record = pygame.draw.rect(screen, 'black', [WIDTH*(7/31), HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20)], 1, 2)
-    key_label = medium_font.render('Остановить запись', True, 'black')
-    center = key_label.get_rect(center = (WIDTH*(7/31) + WIDTH*(5/62), HEIGHT*(1/120) + HEIGHT*(1/20)/2))
-    screen.blit(key_label, center) 
+#     btn_stop_record = pygame.draw.rect(screen, 'black', [WIDTH*(7/31), HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20)], 1, 2)
+#     key_label = medium_font.render('Остановить запись', True, 'black')
+#     center = key_label.get_rect(center = (WIDTH*(7/31) + WIDTH*(5/62), HEIGHT*(1/120) + HEIGHT*(1/20)/2))
+#     screen.blit(key_label, center) 
     
-    btn_play_music = pygame.draw.rect(screen, 'black', [WIDTH*(13/31), HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20)], 1, 2)
-    key_label = medium_font.render('Воспроизвести музыку', True, 'black')
-    center = key_label.get_rect(center = (WIDTH*(13/31) + WIDTH*(5/62), HEIGHT*(1/120) + HEIGHT*(1/20)/2))
-    screen.blit(key_label, center) 
+#     btn_play_music = pygame.draw.rect(screen, 'black', [WIDTH*(13/31), HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20)], 1, 2)
+#     key_label = medium_font.render('Воспроизвести музыку', True, 'black')
+#     center = key_label.get_rect(center = (WIDTH*(13/31) + WIDTH*(5/62), HEIGHT*(1/120) + HEIGHT*(1/20)/2))
+#     screen.blit(key_label, center) 
     
-    btn_stop_music = pygame.draw.rect(screen, 'black', [WIDTH*(19/31), HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20)], 1, 2)
-    key_label = medium_font.render('Остановить музыку', True, 'black')
-    center = key_label.get_rect(center = (WIDTH*(19/31) + WIDTH*(5/62), HEIGHT*(1/120) + HEIGHT*(1/20)/2))
-    screen.blit(key_label, center) 
+#     btn_stop_music = pygame.draw.rect(screen, 'black', [WIDTH*(19/31), HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20)], 1, 2)
+#     key_label = medium_font.render('Остановить музыку', True, 'black')
+#     center = key_label.get_rect(center = (WIDTH*(19/31) + WIDTH*(5/62), HEIGHT*(1/120) + HEIGHT*(1/20)/2))
+#     screen.blit(key_label, center) 
     
-    return btn_record, btn_stop_record, btn_play_music, btn_stop_music
+#     return btn_record, btn_stop_record, btn_play_music, btn_stop_music
 
 def record_timer(screen, HEIGHT, WIDTH, if_record, curr_sec, sec, mins):
     if if_record == True:
