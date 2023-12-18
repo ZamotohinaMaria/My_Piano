@@ -16,6 +16,9 @@ bold_button_font = pygame.font.Font('assets/timesnrcyrmt_bold.ttf', 16)
 lock_image = pygame.image.load('assets/images/lock.png')
 lock_image = pygame.transform.scale(lock_image, (20, 20))
 
+close_image = pygame.image.load('assets/images/close.png')
+close_image = pygame.transform.scale(close_image, (20, 20))
+
 button_label = pl2.button_list
 piano_notes_label = pl2.piano_notes
 
@@ -294,11 +297,13 @@ def check_key(screen, WIDTH, HEIGHT, if_check_key, key):
             input_text = bold_button_font.render('Ключ успешно введен', True, 'black')
             input_rect = input_text.get_rect(center = (WIDTH*(8/20) + WIDTH*(1/10), HEIGHT*(7/40) + HEIGHT/40))
             screen.blit(input_text, input_rect)
+            screen.blit(close_image, (WIDTH*(8/20) + WIDTH*(2/10) - 23, HEIGHT*(7/40) + 2))
             return True
         else:
             pygame.draw.rect(screen, '#FFBCBC', [WIDTH*(8/20) , HEIGHT*(7/40), WIDTH*(2/10), HEIGHT/20], 0, 2)
             pygame.draw.rect(screen, '#D06868', [WIDTH*(8/20) , HEIGHT*(7/40), WIDTH*(2/10), HEIGHT/20], 2, 2)
-            input_text = bold_button_font.render('Ключ успешно введен', True, 'black')
+            input_text = bold_button_font.render('Ключ неверен', True, 'black')
             input_rect = input_text.get_rect(center = (WIDTH*(8/20) + WIDTH*(1/10), HEIGHT*(7/40) + HEIGHT/40))
             screen.blit(input_text, input_rect)
+            screen.blit(close_image, (WIDTH*(8/20) + WIDTH*(2/10) - 23, HEIGHT*(7/40) + 2))
             return False

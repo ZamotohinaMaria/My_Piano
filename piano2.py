@@ -49,6 +49,7 @@ input_key = ''
 input_text = ''
 if_check_key = False
 if_key_right = False
+btn_close = pygame.draw.rect(screen, 'white', [0, 0, 0, 0], 1, 2)
 
 sec =0
 mins = 0
@@ -114,7 +115,8 @@ while run:
         screen.blit(key_label, center)
         
     if (btn_view_sample.getX() <= mouse[0] and (btn_view_sample.getWidth() + btn_view_sample.getX()) >= mouse[0] and 
-        btn_view_sample.getY() <= mouse[1] and (btn_view_sample.getHeight() + btn_view_sample.getY()) >= mouse[1]):
+        btn_view_sample.getY() <= mouse[1] and (btn_view_sample.getHeight() + btn_view_sample.getY()) >= mouse[1] and
+        btn_view_sample._disabled == False):
         pygame.draw.rect(screen, 'white', [btn_view_sample.getWidth() + btn_view_sample.getX(),
                                              btn_view_sample.getHeight() + btn_view_sample.getY() + 10, 
                                              WIDTH*(3/30), HEIGHT/25], 0, 2)
@@ -124,7 +126,8 @@ while run:
         screen.blit(key_label, center)
     
     if (btn_stop_view_sample.getX() <= mouse[0] and (btn_stop_view_sample.getWidth() + btn_stop_view_sample.getX()) >= mouse[0] and 
-        btn_stop_view_sample.getY() <= mouse[1] and (btn_stop_view_sample.getHeight() + btn_stop_view_sample.getY()) >= mouse[1]):
+        btn_stop_view_sample.getY() <= mouse[1] and (btn_stop_view_sample.getHeight() + btn_stop_view_sample.getY()) >= mouse[1] and 
+        btn_stop_view_sample._disabled == False):
         pygame.draw.rect(screen, 'white', [btn_stop_view_sample.getWidth() + btn_stop_view_sample.getX(),
                                              btn_stop_view_sample.getHeight() + btn_stop_view_sample.getY() + 10, 
                                              WIDTH*(3/30), HEIGHT/25], 0, 2)
@@ -134,7 +137,8 @@ while run:
         screen.blit(key_label, center)
         
     if (btn_input_key.getX() <= mouse[0] and (btn_input_key.getWidth() + btn_input_key.getX()) >= mouse[0] and 
-        btn_input_key.getY() <= mouse[1] and (btn_input_key.getHeight() + btn_input_key.getY()) >= mouse[1]):
+        btn_input_key.getY() <= mouse[1] and (btn_input_key.getHeight() + btn_input_key.getY()) >= mouse[1] and 
+        btn_input_key._disabled == False):
         pygame.draw.rect(screen, 'white', [btn_input_key.getWidth() + btn_input_key.getX(),
                                              btn_input_key.getHeight() + btn_input_key.getY() + 10, 
                                              WIDTH*(5/30), HEIGHT/25], 0, 2)
@@ -142,6 +146,16 @@ while run:
         center = key_label.get_rect(center = (btn_input_key.getWidth() + btn_input_key.getX() + WIDTH*(5/60), 
                                               btn_input_key.getHeight() + btn_input_key.getY() + HEIGHT/50 + 8))
         screen.blit(key_label, center)
+    elif (btn_input_key.getX() <= mouse[0] and (btn_input_key.getWidth() + btn_input_key.getX()) >= mouse[0] and 
+        btn_input_key.getY() <= mouse[1] and (btn_input_key.getHeight() + btn_input_key.getY()) >= mouse[1] and btn_input_key._disabled == True):
+        pygame.draw.rect(screen, 'white', [btn_input_key.getWidth() + btn_input_key.getX(),
+                                             btn_input_key.getHeight() + btn_input_key.getY() + 10, 
+                                             WIDTH*(5/30), HEIGHT/25], 0, 2)
+        key_label = btn_font.render('Ключ уже введен', True, 'black')
+        center = key_label.get_rect(center = (btn_input_key.getWidth() + btn_input_key.getX() + WIDTH*(5/60), 
+                                              btn_input_key.getHeight() + btn_input_key.getY() + HEIGHT/50 + 8))
+        screen.blit(key_label, center)
+        
     
     events = pygame.event.get()
     for event in events:
@@ -181,6 +195,10 @@ while run:
                         track.append(mido.Message('note_on', note=midi_notes[white_notes_label[i]], velocity=100, time=round((sec + time.time() % 1 + mins * 60) * 65)))
                     else:
                         active_whites.append([i, 30, midi_notes[white_notes_label[i]], 0])
+            
+            if btn_close.collidepoint(event.pos):
+                btn_close = pygame.draw.rect(screen, 'white', [0, 0, 0, 0], 1, 2)
+                if_check_key = False
 
         if btn_record.clicked == True:
             print(btn_record.clicked)
@@ -207,22 +225,32 @@ while run:
             pygame.mixer.music.stop()
 
         if btn_input_key.clicked == True:
-            if_input = True
+            if if_key_right == False:
+                if_input = True
 
+        if if_key_right == True:
+            btn_input_key.disable()
             
         if if_lock == False:
+            btn_view_sample.enable()
+            btn_stop_view_sample.enable()
+            drop_learn_samples.enable()
             if btn_view_sample.clicked == True:
-                    view = True
+                    if_view = True
                 
             if btn_stop_view_sample.clicked == True:
-                    view = False
-                
+                    if_view = False
+     
             if drop_learn_samples.getSelected() == 'ABBA':
                 key_learn = drop_learn_samples.getSelected()
             if drop_learn_samples.getSelected() == 'Konb':
                 key_learn = drop_learn_samples.getSelected()
             if drop_learn_samples.getSelected() == 'KISH':
                 key_learn = drop_learn_samples.getSelected()
+        else:
+            btn_view_sample.disable()
+            btn_stop_view_sample.disable()
+            drop_learn_samples.disable()
                 
 
         if event.type == pygame.KEYDOWN:           
@@ -264,10 +292,14 @@ while run:
     pygame_widgets.update(events)
     f.view_lock(screen, WIDTH, HEIGHT, if_lock)
     f.input_key(screen, WIDTH, HEIGHT, if_input, input_text)
-    if_key_right = f.check_key(screen, WIDTH, HEIGHT, if_check_key, input_key)
+    if if_check_key == True:
+        if_key_right = f.check_key(screen, WIDTH, HEIGHT, if_check_key, input_key)
     
     if if_check_key == True and if_key_right == True:
         if_lock = False
+        
+    if if_check_key == True:
+        btn_close = pygame.draw.rect(screen, 'black', [WIDTH*(8/20) + WIDTH*(2/10) - 23, HEIGHT*(7/40) + 2, 20, 20], 1, 2)
     pygame.display.flip()
 #this will quite the  window of the pygame 
 pygame.quit()
