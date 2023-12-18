@@ -24,7 +24,6 @@ pygame.display.set_caption("Python Piano - CopyAssignment")
 current_size = screen.get_size()
 
 fps = 60
-key_learn = None
 
 key_list = pl2.key_list
 piano_notes_key = pl2.notes_dict
@@ -41,14 +40,23 @@ active_button_black = []
 
 run = True
 if_record = False
+if_lock = True
+if_view = False
+if_input = False
+key_learn = None
+
+input_key = ''
+input_text = ''
+if_check_key = False
+if_key_right = False
+
 sec =0
 mins = 0
 curr_sec = 0
 
 btn_font = pygame.font.Font('assets/timesnrcyrmt.ttf', 16)
-lock_image = pygame.image.load('assets/images/lock.png')
-lock_image = pygame.transform.scale(lock_image, (20, 20))
-btn_record, btn_stop_record, btn_play_music, btn_stop_music, drop_learn_samples = buttons.create_buttons(screen, WIDTH, HEIGHT)
+input_font = pygame.font.Font('assets/timesnrcyrmt.ttf', 14)
+btn_record, btn_stop_record, btn_play_music, btn_stop_music, btn_view_sample, btn_stop_view_sample, btn_input_key, drop_learn_samples = buttons.create_buttons(screen, WIDTH, HEIGHT)
 
 mid = MidiFile()
 track = MidiTrack()
@@ -61,47 +69,78 @@ while run:
     pygame.draw.rect(screen, '#CCCCFF', [0, 0, WIDTH, HEIGHT/15], 0, 2) 
     
     curr_sec, sec, mins = f.record_timer(screen, HEIGHT, WIDTH, if_record, curr_sec, sec, mins)
+    f.view_sample(screen, WIDTH, HEIGHT, if_view, key_learn)
     
     mouse = pygame.mouse.get_pos()
     
     if (btn_record.getX() <= mouse[0] and (btn_record.getWidth() + btn_record.getX()) >= mouse[0] and 
         btn_record.getY() <= mouse[1] and (btn_record.getHeight() + btn_record.getY()) >= mouse[1]):
         pygame.draw.rect(screen, 'white', [btn_record.getWidth() + btn_record.getX(),
-                                             btn_record.getHeight() + btn_record.getY(), 
+                                             btn_record.getHeight() + btn_record.getY() + 10, 
                                              WIDTH*(3/31), HEIGHT/25], 0, 2)
         key_label = btn_font.render('Начать запись', True, 'black')
         center = key_label.get_rect(center = (btn_record.getWidth() + btn_record.getX() + WIDTH*(3/62), 
-                                              btn_record.getHeight() + btn_record.getY() + HEIGHT/50))
+                                              btn_record.getHeight() + btn_record.getY() + HEIGHT/50 + 8))
         screen.blit(key_label, center) 
         
     if (btn_stop_record.getX() <= mouse[0] and (btn_stop_record.getWidth() + btn_stop_record.getX()) >= mouse[0] and 
         btn_stop_record.getY() <= mouse[1] and (btn_stop_record.getHeight() + btn_stop_record.getY()) >= mouse[1]):
         pygame.draw.rect(screen, 'white', [btn_stop_record.getWidth() + btn_stop_record.getX(),
-                                             btn_stop_record.getHeight() + btn_stop_record.getY(), 
+                                             btn_stop_record.getHeight() + btn_stop_record.getY() + 10, 
                                              WIDTH*(3/31), HEIGHT/25], 0, 2)
         key_label = btn_font.render('Остановить запись', True, 'black')
         center = key_label.get_rect(center = (btn_stop_record.getWidth() + btn_stop_record.getX() + WIDTH*(3/62), 
-                                              btn_stop_record.getHeight() + btn_stop_record.getY() + HEIGHT/50))
+                                              btn_stop_record.getHeight() + btn_stop_record.getY() + HEIGHT/50 + 8))
         screen.blit(key_label, center)
         
     if (btn_play_music.getX() <= mouse[0] and (btn_play_music.getWidth() + btn_play_music.getX()) >= mouse[0] and 
         btn_play_music.getY() <= mouse[1] and (btn_play_music.getHeight() + btn_play_music.getY()) >= mouse[1]):
         pygame.draw.rect(screen, 'white', [btn_play_music.getWidth() + btn_play_music.getX(),
-                                             btn_play_music.getHeight() + btn_play_music.getY(), 
+                                             btn_play_music.getHeight() + btn_play_music.getY() + 10, 
                                              WIDTH*(4/31), HEIGHT/25], 0, 2)
         key_label = btn_font.render('Воспроизвести музыку', True, 'black')
         center = key_label.get_rect(center = (btn_play_music.getWidth() + btn_play_music.getX() + WIDTH*(4/62), 
-                                              btn_play_music.getHeight() + btn_play_music.getY() + HEIGHT/50))
+                                              btn_play_music.getHeight() + btn_play_music.getY() + HEIGHT/50 + 8))
         screen.blit(key_label, center)
         
     if (btn_stop_music.getX() <= mouse[0] and (btn_stop_music.getWidth() + btn_stop_music.getX()) >= mouse[0] and 
         btn_stop_music.getY() <= mouse[1] and (btn_stop_music.getHeight() + btn_stop_music.getY()) >= mouse[1]):
         pygame.draw.rect(screen, 'white', [btn_stop_music.getWidth() + btn_stop_music.getX(),
-                                             btn_stop_music.getHeight() + btn_stop_music.getY(), 
+                                             btn_stop_music.getHeight() + btn_stop_music.getY() + 10, 
                                              WIDTH*(4/30), HEIGHT/25], 0, 2)
         key_label = btn_font.render('Остановить воспроизведение', True, 'black')
         center = key_label.get_rect(center = (btn_stop_music.getWidth() + btn_stop_music.getX() + WIDTH*(4/60), 
-                                              btn_stop_music.getHeight() + btn_stop_music.getY() + HEIGHT/50))
+                                              btn_stop_music.getHeight() + btn_stop_music.getY() + HEIGHT/50 + 8))
+        screen.blit(key_label, center)
+        
+    if (btn_view_sample.getX() <= mouse[0] and (btn_view_sample.getWidth() + btn_view_sample.getX()) >= mouse[0] and 
+        btn_view_sample.getY() <= mouse[1] and (btn_view_sample.getHeight() + btn_view_sample.getY()) >= mouse[1]):
+        pygame.draw.rect(screen, 'white', [btn_view_sample.getWidth() + btn_view_sample.getX(),
+                                             btn_view_sample.getHeight() + btn_view_sample.getY() + 10, 
+                                             WIDTH*(3/30), HEIGHT/25], 0, 2)
+        key_label = btn_font.render('Показать ноты', True, 'black')
+        center = key_label.get_rect(center = (btn_view_sample.getWidth() + btn_view_sample.getX() + WIDTH*(3/60), 
+                                              btn_view_sample.getHeight() + btn_view_sample.getY() + HEIGHT/50 + 8))
+        screen.blit(key_label, center)
+    
+    if (btn_stop_view_sample.getX() <= mouse[0] and (btn_stop_view_sample.getWidth() + btn_stop_view_sample.getX()) >= mouse[0] and 
+        btn_stop_view_sample.getY() <= mouse[1] and (btn_stop_view_sample.getHeight() + btn_stop_view_sample.getY()) >= mouse[1]):
+        pygame.draw.rect(screen, 'white', [btn_stop_view_sample.getWidth() + btn_stop_view_sample.getX(),
+                                             btn_stop_view_sample.getHeight() + btn_stop_view_sample.getY() + 10, 
+                                             WIDTH*(3/30), HEIGHT/25], 0, 2)
+        key_label = btn_font.render('Скрыть ноты', True, 'black')
+        center = key_label.get_rect(center = (btn_stop_view_sample.getWidth() + btn_stop_view_sample.getX() + WIDTH*(3/60), 
+                                              btn_stop_view_sample.getHeight() + btn_stop_view_sample.getY() + HEIGHT/50 + 8))
+        screen.blit(key_label, center)
+        
+    if (btn_input_key.getX() <= mouse[0] and (btn_input_key.getWidth() + btn_input_key.getX()) >= mouse[0] and 
+        btn_input_key.getY() <= mouse[1] and (btn_input_key.getHeight() + btn_input_key.getY()) >= mouse[1]):
+        pygame.draw.rect(screen, 'white', [btn_input_key.getWidth() + btn_input_key.getX(),
+                                             btn_input_key.getHeight() + btn_input_key.getY() + 10, 
+                                             WIDTH*(5/30), HEIGHT/25], 0, 2)
+        key_label = btn_font.render('Ввести лицензионный ключ', True, 'black')
+        center = key_label.get_rect(center = (btn_input_key.getWidth() + btn_input_key.getX() + WIDTH*(5/60), 
+                                              btn_input_key.getHeight() + btn_input_key.getY() + HEIGHT/50 + 8))
         screen.blit(key_label, center)
     
     events = pygame.event.get()
@@ -167,43 +206,68 @@ while run:
         if btn_stop_music.clicked == True:
             pygame.mixer.music.stop()
 
+        if btn_input_key.clicked == True:
+            if_input = True
 
-        if drop_learn_samples.getSelected() == 1:
-            print('Abba')
-        if drop_learn_samples.getSelected() == 2:
-            print('Konb')
-        if drop_learn_samples.getSelected() == 3:
-            print('KISH')
+            
+        if if_lock == False:
+            if btn_view_sample.clicked == True:
+                    view = True
+                
+            if btn_stop_view_sample.clicked == True:
+                    view = False
+                
+            if drop_learn_samples.getSelected() == 'ABBA':
+                key_learn = drop_learn_samples.getSelected()
+            if drop_learn_samples.getSelected() == 'Konb':
+                key_learn = drop_learn_samples.getSelected()
+            if drop_learn_samples.getSelected() == 'KISH':
+                key_learn = drop_learn_samples.getSelected()
+                
 
-        if event.type == pygame.KEYDOWN:
-            if event.key in key_list:
-                if piano_notes_key[str(event.key)] in black_flats_label:
-                    index = black_flats_label.index(piano_notes_key[str(event.key)])
-                    black_sounds[index].play(0, 1000)
+        if event.type == pygame.KEYDOWN:           
+            if if_input == False:
+                if event.key in key_list:
+                    if piano_notes_key[str(event.key)] in black_flats_label:
+                        index = black_flats_label.index(piano_notes_key[str(event.key)])
+                        black_sounds[index].play(0, 1000)
+                        
+                        active_button_black.append([index, 30])
+                        if if_record == True:
+                            active_blacks.append([index, 30, midi_notes[piano_notes_key[str(event.key)]], 1])
+                            track.append(mido.Message('note_on', note=midi_notes[piano_notes_key[str(event.key)]], velocity=100, time=round((sec + time.time() % 1 + mins * 60 ) * 65)))
+                        else:
+                            active_blacks.append([index, 30, midi_notes[piano_notes_key[str(event.key)]], 0])
                     
-                    active_button_black.append([index, 30])
-                    if if_record == True:
-                        active_blacks.append([index, 30, midi_notes[piano_notes_key[str(event.key)]], 1])
-                        track.append(mido.Message('note_on', note=midi_notes[piano_notes_key[str(event.key)]], velocity=100, time=round((sec + time.time() % 1 + mins * 60 ) * 65)))
-                    else:
-                        active_blacks.append([index, 30, midi_notes[piano_notes_key[str(event.key)]], 0])
-                
-                if piano_notes_key[str(event.key)] in white_notes_label:
-                    index = white_notes_label.index(piano_notes_key[str(event.key)])
-                    white_sounds[index].play(0, 1000)
-                
-                    active_button_white.append([index, 30])
-                    if if_record == True:
-                        active_whites.append([index, 30, midi_notes[piano_notes_key[str(event.key)]], 1])
-                        track.append(mido.Message('note_on', note=midi_notes[piano_notes_key[str(event.key)]], velocity=100, time=round((sec + time.time() % 1 + mins * 60) * 65)))
-                    else:
-                        active_whites.append([index, 30, midi_notes[piano_notes_key[str(event.key)]], 0])
+                    if piano_notes_key[str(event.key)] in white_notes_label:
+                        index = white_notes_label.index(piano_notes_key[str(event.key)])
+                        white_sounds[index].play(0, 1000)
+                    
+                        active_button_white.append([index, 30])
+                        if if_record == True:
+                            active_whites.append([index, 30, midi_notes[piano_notes_key[str(event.key)]], 1])
+                            track.append(mido.Message('note_on', note=midi_notes[piano_notes_key[str(event.key)]], velocity=100, time=round((sec + time.time() % 1 + mins * 60) * 65)))
+                        else:
+                            active_whites.append([index, 30, midi_notes[piano_notes_key[str(event.key)]], 0])
+            if if_input == True:
+                if event.key == pygame.K_BACKSPACE:  
+                    input_text = input_text[:-1]
+                elif event.key == pygame.K_RETURN:
+                    input_key = input_text
+                    input_text = ''
+                    if_input = False
+                    if_check_key = True
+                else: 
+                    input_text += event.unicode
     
     
-    
-                
     pygame_widgets.update(events)
-    screen.blit(lock_image, (WIDTH*(25/31), HEIGHT*(1/120)))
+    f.view_lock(screen, WIDTH, HEIGHT, if_lock)
+    f.input_key(screen, WIDTH, HEIGHT, if_input, input_text)
+    if_key_right = f.check_key(screen, WIDTH, HEIGHT, if_check_key, input_key)
+    
+    if if_check_key == True and if_key_right == True:
+        if_lock = False
     pygame.display.flip()
 #this will quite the  window of the pygame 
 pygame.quit()

@@ -56,16 +56,61 @@ def create_buttons(screen, WIDTH, HEIGHT):
         radius=3
     )
 
+    view_sample_image = pygame.image.load('assets/images/note_list.png')
+    view_sample_image = pygame.transform.scale(view_sample_image, ( WIDTH*(1/45),  HEIGHT*(1/25)))
+
+    btn_view_sample = Button(
+        screen, WIDTH/150 + WIDTH*(38/50), HEIGHT*(1/120), WIDTH*(1/38), HEIGHT*(1/20), 
+
+        image = view_sample_image,
+        inactiveColour=(240, 240, 255), 
+        hoverColour=(225, 225, 255), 
+        pressedColour=(160, 160, 255),
+        radius=3
+    )
+    
+    stop_view_sample_image = pygame.image.load('assets/images/close_note_list.png')
+    stop_view_sample_image = pygame.transform.scale(stop_view_sample_image, ( WIDTH*(1/45),  HEIGHT*(1/25)))
+
+    btn_stop_view_sample = Button(
+        screen, WIDTH/150 + WIDTH*(36/50), HEIGHT*(1/120), WIDTH*(1/38), HEIGHT*(1/20), 
+
+        image = stop_view_sample_image,
+        inactiveColour=(240, 240, 255), 
+        hoverColour=(225, 225, 255), 
+        pressedColour=(160, 160, 255),
+        radius=3
+    )
+    
+    input_key = pygame.image.load('assets/images/key.png')
+    input_key = pygame.transform.scale(input_key, ( WIDTH*(1/45),  HEIGHT*(1/25)))
+
+    btn_input_key = Button(
+        screen, WIDTH/150 + WIDTH*(34/50), HEIGHT*(1/120), WIDTH*(1/38), HEIGHT*(1/20), 
+
+        image = input_key,
+        inactiveColour=(240, 240, 255), 
+        hoverColour=(225, 225, 255), 
+        pressedColour=(160, 160, 255),
+        radius=3
+    )    
+
     drop_learn_samples = Dropdown(
-        screen, WIDTH*(25/31), HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20), name='Играть по нотам',
+        screen, WIDTH/150 + WIDTH*(40/50), HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20), name='Выбрать композицию',
         choices=[
+            'Выбрать композицию',
             'ABBA',
             'Конь',
             'Кукла колдуна',
         ],
         font = pygame.font.Font('assets/timesnrcyrmt_bold.ttf', 24),
         borderRadius=3, 
-        colour=(150, 150, 255), values=[1, 2, 2], direction='down'
+        inactiveColour=(240, 240, 255), 
+        hoverColour=(225, 225, 255), 
+        pressedColour=(160, 160, 255),
+        values=[None, 'ABBA', 'Konb', 'KISH'], direction='down'
     )
     
-    return btn_record, btn_stop_record, btn_play_music, btn_stop_music, drop_learn_samples
+    return (btn_record, btn_stop_record, btn_play_music, 
+            btn_stop_music, btn_view_sample, btn_stop_view_sample, 
+            btn_input_key, drop_learn_samples)

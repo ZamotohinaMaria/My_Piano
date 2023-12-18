@@ -76,3 +76,11 @@ midi_notes = {'C2': 36, 'D-2': 37, 'D2': 38, 'E-2': 39, 'E2': 40, 'F2' :41, 'G-2
                'C3': 48, 'D-3': 49, 'D3': 50, 'E-3': 51, 'E3': 52, 'F3': 53, 'G-3': 54, 'G3': 55, 'A-3': 56, 'A3': 57, 'B-3': 58, 'B3': 59,
                'C4': 60, 'D-4': 61, 'D4': 62, 'E-4': 63, 'E4': 64, 'F4': 65, 'G-4': 66, 'G4': 67, 'A-4': 68, 'A4': 69, 'B-4': 70, 'B4': 71,
                'C5': 72, 'D-5': 73, 'D5': 74, 'E-5':75, 'E5': 76, 'F5': 77, 'G-5':78, 'G5':79, 'A-5': 80, 'A5': 81, 'B-5': 82, 'B5':83, 'C6': 84}
+
+learn_samples = {
+    'ABBA' : 'abba abba abba abba abba\b abba abba abba abba abba\b abba abba abba abba abba\n abba abba abba abba abba\n abba abba abba abba\n',
+    'Konb' : 'konb konb konb konb konb konb konb konb konb konb konb konb konb konb',
+    'KISH' : 'kish kish kish ksih kish'
+}
+
+licence_keys = ['1234', 'qwerty']

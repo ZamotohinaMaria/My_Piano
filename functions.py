@@ -7,11 +7,14 @@ from cryptography.fernet import Fernet
 from music21 import note, stream, duration
 
 pygame.init()
-font = pygame.font.Font('assets/timesnrcyrmt.ttf', 48)
-medium_font = pygame.font.Font('assets/timesnrcyrmt_bold.ttf', 24)
-small_font = pygame.font.Font('assets/timesnrcyrmt_inclined.ttf', 16)
-button_font = pygame.font.Font('assets/timesnrcyrmt.ttf', 14)
-real_small_font = pygame.font.Font('assets/timesnrcyrmt.ttf', 12)
+timer_font = pygame.font.Font('assets/timesnrcyrmt_bold.ttf', 24)
+#key_font = pygame.font.Font('assets/timesnrcyrmt_inclined.ttf', 16)
+key_font = pygame.font.Font('assets/timesnrcyrmt.ttf', 18)
+button_font = pygame.font.Font('assets/timesnrcyrmt.ttf', 12)
+bold_button_font = pygame.font.Font('assets/timesnrcyrmt_bold.ttf', 16)
+
+lock_image = pygame.image.load('assets/images/lock.png')
+lock_image = pygame.transform.scale(lock_image, (20, 20))
 
 button_label = pl2.button_list
 piano_notes_label = pl2.piano_notes
@@ -24,6 +27,9 @@ black_button_list = pl2.black_button_list
 
 not_note_buttom = [0, 1, 2, 3, 4, 5, 6, 7, 20, 33, 46, 47]
 clock = pygame.time.Clock()
+
+learn_samples = pl2.learn_samples
+license_keys = pl2.licence_keys
 
 def get_sounds(white_notes :list, black_flats :list) -> tuple:
     white_sounds = []
@@ -61,7 +67,6 @@ def draw_piano(active_whites, active_blacks, screen, HEIGHT, WIDTH, track, sec, 
     white_rects = []
     for i in range(len(white_notes_label)):
         rect = pygame.draw.rect(screen, 'white', [10 + i * lenght_key, HEIGHT - height_key, lenght_key, height_key], 0, 2)
-        rect = pygame.draw.rect(screen, 'white', [10 + i * lenght_key, HEIGHT - height_key, lenght_key, height_key], 2, 2)
         white_rects.append(rect)      
         
     i = 0
@@ -83,9 +88,10 @@ def draw_piano(active_whites, active_blacks, screen, HEIGHT, WIDTH, track, sec, 
             i +=1
             
     for i in range(len(white_notes_label)):
-        pygame.draw.rect(screen, 'black', [10 + i * lenght_key, HEIGHT - height_key, lenght_key + 1, 300], 2, 2)
-        key_label = small_font.render(white_notes_label[i], True, 'black')
-        screen.blit(key_label, (10 + i * lenght_key + lenght_key / 4, HEIGHT - height_key*(1/6)))
+        pygame.draw.rect(screen, 'black', [10 + i * lenght_key, HEIGHT - height_key, lenght_key + 1, height_key], 2, 2)
+        key_label = key_font.render(white_notes_label[i], True, 'black')
+        center = key_label.get_rect( center = (10 + i * lenght_key + lenght_key / 2 , HEIGHT - height_key*(1/6)))
+        screen.blit(key_label, center)
         
     skip_count = 0
     last_skip = 3
@@ -115,9 +121,10 @@ def draw_piano(active_whites, active_blacks, screen, HEIGHT, WIDTH, track, sec, 
             if q < len_black:
                     q += 1
             
-                    
-        key_label = real_small_font.render(black_flats_label[i], True, 'white')
-        screen.blit(key_label, (10 + lenght_key*(1/1.5 + i + skip_count + 1/(4.5*1.5)), HEIGHT - height_key*(1/2)))
+                           
+        key_label = key_font.render(black_flats_label[i], True, 'white')
+        center = key_label.get_rect( center = (10 + lenght_key*(1/1.5 + i + skip_count)  + lenght_key/(1.4*2), HEIGHT - height_key*(1/2)))
+        screen.blit(key_label, center)
         
         skip_track += 1
         if last_skip == 2 and skip_track == 3:
@@ -179,7 +186,7 @@ def draw_keyboard(active_white, active_black, screen, HEIGHT, WIDTH):
         while j <= 13:
             if j == 3 and i == 0:
                 pygame.draw.rect(screen, 'black', [WIDTH/2 + (j - 7)*lenght_button, (height_place - i)*height_button, lenght_button*(19/20) * 7.3, height_button*(4/5)], 1, 2)
-                key_label = button_font.render(button_label[key_count], True, 'black')
+                key_label = button_font.render(button_label[key_count], True, 'gray')
                 center = key_label.get_rect(center = (WIDTH/2 + (j - 7 + (19/40) * 7.3)*lenght_button , (height_place + 0.4 - i)*height_button))
                 screen.blit(key_label, center)
                 j += 7
@@ -187,7 +194,7 @@ def draw_keyboard(active_white, active_black, screen, HEIGHT, WIDTH):
                 
             if (j == 0 or j == 12) and i == 1:
                 pygame.draw.rect(screen, 'black', [WIDTH/2 + (j - 7)*lenght_button, (height_place - i)*height_button, lenght_button*(19/20) * 2, height_button*(4/5)], 1, 2)
-                key_label = button_font.render(button_label[key_count], True, 'black')
+                key_label = bold_button_font.render(button_label[key_count], True, 'black')
                 center = key_label.get_rect(center = (WIDTH/2 + (j - 7 + (19/20))*lenght_button , (height_place + 0.2 - i)*height_button))
                 screen.blit(key_label, center)
                 
@@ -202,7 +209,7 @@ def draw_keyboard(active_white, active_black, screen, HEIGHT, WIDTH):
                 pygame.draw.rect(screen, 'black', [WIDTH/2 + (j - 7)*lenght_button, (height_place - i)*height_button, lenght_button*(19/20) * 1.5, height_button*(4/5)], 1, 2)
                 
                 if key_count == 32:
-                    key_label = button_font.render(button_label[key_count], True, 'black')
+                    key_label = bold_button_font.render(button_label[key_count], True, 'black')
                     center = key_label.get_rect(center = (WIDTH/2 + (j - 7 + (19/40) * 1.5)*lenght_button , (height_place + 0.2 - i)*height_button))
                     screen.blit(key_label, center)
                 
@@ -211,7 +218,7 @@ def draw_keyboard(active_white, active_black, screen, HEIGHT, WIDTH):
                     screen.blit(key_label, center)
                     notes_count += 1
                 else:
-                    key_label = button_font.render(button_label[key_count], True, 'black')
+                    key_label = button_font.render(button_label[key_count], True, 'gray')
                     center = key_label.get_rect(center = (WIDTH/2 + (j - 7 + (19/40) * 1.5)*lenght_button , (height_place + 0.4 - i)*height_button))
                     screen.blit(key_label, center)
                 j += 1.5
@@ -221,7 +228,7 @@ def draw_keyboard(active_white, active_black, screen, HEIGHT, WIDTH):
                 pygame.draw.rect(screen, 'black', [WIDTH/2 + (j - 7)*lenght_button, (height_place - i)*height_button, lenght_button*(19/20), height_button*(4/5)], 1, 2)                 
                 
                 if key_count not in not_note_buttom:
-                    key_label = button_font.render(button_label[key_count], True, 'black')
+                    key_label = bold_button_font.render(button_label[key_count], True, 'black')
                     center = key_label.get_rect(center = (WIDTH/2 + (j - 6.5)*lenght_button , (height_place + 0.2 - i)*height_button))
                     screen.blit(key_label, center)
                 
@@ -230,42 +237,16 @@ def draw_keyboard(active_white, active_black, screen, HEIGHT, WIDTH):
                     screen.blit(key_label, center)
                     notes_count += 1
                 else:
-                    key_label = button_font.render(button_label[key_count], True, 'black')
+                    key_label = button_font.render(button_label[key_count], True, 'gray')
                     center = key_label.get_rect(center = (WIDTH/2 + (j - 6.5)*lenght_button , (height_place + 0.4 - i)*height_button))
                     screen.blit(key_label, center)
                 j += 1
                 key_count += 1
-   
-    
-# def menu(screen, HEIGHT, WIDTH):
-#     pygame.draw.rect(screen, '#e3e3e3', [0, 0, WIDTH, HEIGHT/15], 0, 2) 
-    
-#     btn_record = pygame.draw.rect(screen, 'black', [WIDTH/30, HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20)], 1, 2)
-#     key_label = medium_font.render('Начать запись', True, 'black')
-#     center = key_label.get_rect(center = (WIDTH/30 + WIDTH*(5/62), HEIGHT*(1/120) + HEIGHT*(1/20)/2))
-#     screen.blit(key_label, center) 
-    
-#     btn_stop_record = pygame.draw.rect(screen, 'black', [WIDTH*(7/31), HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20)], 1, 2)
-#     key_label = medium_font.render('Остановить запись', True, 'black')
-#     center = key_label.get_rect(center = (WIDTH*(7/31) + WIDTH*(5/62), HEIGHT*(1/120) + HEIGHT*(1/20)/2))
-#     screen.blit(key_label, center) 
-    
-#     btn_play_music = pygame.draw.rect(screen, 'black', [WIDTH*(13/31), HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20)], 1, 2)
-#     key_label = medium_font.render('Воспроизвести музыку', True, 'black')
-#     center = key_label.get_rect(center = (WIDTH*(13/31) + WIDTH*(5/62), HEIGHT*(1/120) + HEIGHT*(1/20)/2))
-#     screen.blit(key_label, center) 
-    
-#     btn_stop_music = pygame.draw.rect(screen, 'black', [WIDTH*(19/31), HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20)], 1, 2)
-#     key_label = medium_font.render('Остановить музыку', True, 'black')
-#     center = key_label.get_rect(center = (WIDTH*(19/31) + WIDTH*(5/62), HEIGHT*(1/120) + HEIGHT*(1/20)/2))
-#     screen.blit(key_label, center) 
-    
-#     return btn_record, btn_stop_record, btn_play_music, btn_stop_music
 
 def record_timer(screen, HEIGHT, WIDTH, if_record, curr_sec, sec, mins):
     if if_record == True:
         pygame.draw.rect(screen, 'red', [WIDTH*(9/20) , HEIGHT*(7/40), WIDTH/10, HEIGHT/20], 1, 2) 
-        record_time = medium_font.render('{}:{}'.format(mins, sec), True, 'red')
+        record_time = timer_font.render('{}:{}'.format(mins, sec), True, 'red')
         record_rect = record_time.get_rect(center = (WIDTH*(1/2), HEIGHT*(4/20)))
         if (curr_sec - time.time()//1) != 0: 
             curr_sec = time.time()//1
@@ -275,7 +256,49 @@ def record_timer(screen, HEIGHT, WIDTH, if_record, curr_sec, sec, mins):
             sec = 0
             mins += 1
     return curr_sec, sec, mins
-                
-def choise_sample():
-    print()
       
+def view_sample(screen, WIDTH, HEIGHT, view, key_learn):
+    if view == True:
+        if key_learn == None:
+            pygame.draw.rect(screen, 'red', [WIDTH*(8/20) , HEIGHT*(7/40), WIDTH*(2/10), HEIGHT/20], 1, 2) 
+            warn_text = bold_button_font.render('Выберите композицию', True, 'red')
+            warn_rect = warn_text.get_rect(center = (WIDTH*(1/2), HEIGHT*(4/20)))
+            screen.blit(warn_text, warn_rect)
+        else:  
+            pygame.draw.rect(screen, 'black', [WIDTH*(3/20) , HEIGHT/15 + HEIGHT*(1/40), WIDTH*(7/10), HEIGHT*(3/20)], 1, 2) 
+            sample_text = bold_button_font.render(learn_samples[key_learn], True, 'black')
+            sample_rect = sample_text.get_rect(center = (WIDTH*(3/20) + WIDTH*(7/20), HEIGHT/15 + HEIGHT*(1/40) + HEIGHT*(3/40)))
+            screen.blit(sample_text, sample_rect)
+            
+def view_lock(screen, WIDTH, HEIGHT, if_lock):
+    if if_lock == True:
+        screen.blit(lock_image, (WIDTH/150 + WIDTH*(40/50), HEIGHT*(1/120)))
+        pygame.draw.rect(screen, 'red', [WIDTH*(8/20) , HEIGHT*(7/80), WIDTH*(2/10), HEIGHT/20], 1, 2) 
+        warn_text = timer_font.render('Введите лицензионный ключ', True, 'red')
+        warn_rect = warn_text.get_rect(center = (WIDTH*(1/2), HEIGHT*(7/80) + HEIGHT/40))
+        screen.blit(warn_text, warn_rect)
+        
+def input_key(screen, WIDTH, HEIGHT, if_input, input_key):
+    if if_input == True:
+        pygame.draw.rect(screen, '#CCCCFF', [WIDTH*(8/20) , HEIGHT*(7/40), WIDTH*(2/10), HEIGHT/20], 0, 2)
+        pygame.draw.rect(screen, '#9A9AFF', [WIDTH*(8/20) , HEIGHT*(7/40), WIDTH*(2/10), HEIGHT/20], 2, 2)
+        input_text = bold_button_font.render(input_key, True, 'black')
+        input_rect = input_text.get_rect(center = (WIDTH*(8/20) + WIDTH*(1/10), HEIGHT*(7/40) + HEIGHT/40))
+        screen.blit(input_text, input_rect)
+        
+def check_key(screen, WIDTH, HEIGHT, if_check_key, key):
+    if if_check_key == True:
+        if key in license_keys:
+            pygame.draw.rect(screen, '#CDFFD0', [WIDTH*(8/20) , HEIGHT*(7/40), WIDTH*(2/10), HEIGHT/20], 0, 2)
+            pygame.draw.rect(screen, '#6DCA73', [WIDTH*(8/20) , HEIGHT*(7/40), WIDTH*(2/10), HEIGHT/20], 2, 2)
+            input_text = bold_button_font.render('Ключ успешно введен', True, 'black')
+            input_rect = input_text.get_rect(center = (WIDTH*(8/20) + WIDTH*(1/10), HEIGHT*(7/40) + HEIGHT/40))
+            screen.blit(input_text, input_rect)
+            return True
+        else:
+            pygame.draw.rect(screen, '#FFBCBC', [WIDTH*(8/20) , HEIGHT*(7/40), WIDTH*(2/10), HEIGHT/20], 0, 2)
+            pygame.draw.rect(screen, '#D06868', [WIDTH*(8/20) , HEIGHT*(7/40), WIDTH*(2/10), HEIGHT/20], 2, 2)
+            input_text = bold_button_font.render('Ключ успешно введен', True, 'black')
+            input_rect = input_text.get_rect(center = (WIDTH*(8/20) + WIDTH*(1/10), HEIGHT*(7/40) + HEIGHT/40))
+            screen.blit(input_text, input_rect)
+            return False
