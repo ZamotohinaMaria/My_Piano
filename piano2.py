@@ -55,6 +55,8 @@ sec =0
 mins = 0
 curr_sec = 0
 
+i_note = 0
+
 btn_font = pygame.font.Font('assets/timesnrcyrmt.ttf', 16)
 input_font = pygame.font.Font('assets/timesnrcyrmt.ttf', 14)
 btn_record, btn_stop_record, btn_play_music, btn_stop_music, btn_view_sample, btn_stop_view_sample, btn_input_key, drop_learn_samples = buttons.create_buttons(screen, WIDTH, HEIGHT)
@@ -65,11 +67,11 @@ while run:
     timer.tick(fps)
     screen.fill('#F5F5FF')
 
-    white_keys, black_keys, active_whites, active_blacks = f.draw_piano(active_whites, active_blacks, screen, HEIGHT, WIDTH, track, sec, mins)
-    f.draw_keyboard(active_button_white, active_button_black, screen, HEIGHT, WIDTH)
+    white_keys, black_keys, active_whites, active_blacks = f.draw_piano(active_whites, active_blacks, screen, HEIGHT, WIDTH, track, sec, mins, pl2.kon, i_note, if_view)
+    f.draw_keyboard(active_button_white, active_button_black, screen, HEIGHT, WIDTH, if_view)
     pygame.draw.rect(screen, '#CCCCFF', [0, 0, WIDTH, HEIGHT/15], 0, 2) 
     
-    curr_sec, sec, mins = f.record_timer(screen, HEIGHT, WIDTH, if_record, curr_sec, sec, mins)
+    
     f.view_sample(screen, WIDTH, HEIGHT, if_view, key_learn)
     
     mouse = pygame.mouse.get_pos()
@@ -240,19 +242,13 @@ while run:
                 
             if btn_stop_view_sample.clicked == True:
                     if_view = False
-     
-            if drop_learn_samples.getSelected() == 'ABBA':
-                key_learn = drop_learn_samples.getSelected()
-            if drop_learn_samples.getSelected() == 'Konb':
-                key_learn = drop_learn_samples.getSelected()
-            if drop_learn_samples.getSelected() == 'KISH':
-                key_learn = drop_learn_samples.getSelected()
+
+            key_learn = drop_learn_samples.getSelected()
         else:
             btn_view_sample.disable()
             btn_stop_view_sample.disable()
             drop_learn_samples.disable()
                 
-
         if event.type == pygame.KEYDOWN:           
             if if_input == False:
                 if event.key in key_list:
@@ -263,9 +259,19 @@ while run:
                         active_button_black.append([index, 30])
                         if if_record == True:
                             active_blacks.append([index, 30, midi_notes[piano_notes_key[str(event.key)]], 1])
-                            track.append(mido.Message('note_on', note=midi_notes[piano_notes_key[str(event.key)]], velocity=100, time=round((sec + time.time() % 1 + mins * 60 ) * 65)))
+                            track.append(mido.Message('note_on', note=midi_notes[piano_notes_key[str(event.key)]], velocity=100, time=round((sec + time.time() % 1 + mins * 60 )*40)))
                         else:
                             active_blacks.append([index, 30, midi_notes[piano_notes_key[str(event.key)]], 0])
+                            
+                        print(key_learn)
+                        if if_view == True and key_learn == 'Konb':
+                            if i_note == len(pl2.kon):
+                                i_note = -1
+                            if piano_notes_key[str(event.key)] == pl2.kon[i_note]:
+                                i_note += 1
+                            
+                            print(i_note)
+                                
                     
                     if piano_notes_key[str(event.key)] in white_notes_label:
                         index = white_notes_label.index(piano_notes_key[str(event.key)])
@@ -274,9 +280,17 @@ while run:
                         active_button_white.append([index, 30])
                         if if_record == True:
                             active_whites.append([index, 30, midi_notes[piano_notes_key[str(event.key)]], 1])
-                            track.append(mido.Message('note_on', note=midi_notes[piano_notes_key[str(event.key)]], velocity=100, time=round((sec + time.time() % 1 + mins * 60) * 65)))
+                            track.append(mido.Message('note_on', note=midi_notes[piano_notes_key[str(event.key)]], velocity=100, time=round((sec + time.time() % 1 + mins * 60)*40)))
                         else:
                             active_whites.append([index, 30, midi_notes[piano_notes_key[str(event.key)]], 0])
+                            
+                        if if_view == True and key_learn == 'Konb':
+                            if i_note == len(pl2.kon):
+                                i_note = -1
+                            if piano_notes_key[str(event.key)] == pl2.kon[i_note]:
+                                i_note += 1
+                            print(i_note)
+            
             if if_input == True:
                 if event.key == pygame.K_BACKSPACE:  
                     input_text = input_text[:-1]
@@ -292,6 +306,7 @@ while run:
     pygame_widgets.update(events)
     f.view_lock(screen, WIDTH, HEIGHT, if_lock)
     f.input_key(screen, WIDTH, HEIGHT, if_input, input_text)
+    #f.draw_sample(screen, WIDTH, HEIGHT, pl2.kon, i_note, if_view)
     if if_check_key == True:
         if_key_right = f.check_key(screen, WIDTH, HEIGHT, if_check_key, input_key)
     
@@ -300,6 +315,7 @@ while run:
         
     if if_check_key == True:
         btn_close = pygame.draw.rect(screen, 'black', [WIDTH*(8/20) + WIDTH*(2/10) - 23, HEIGHT*(7/40) + 2, 20, 20], 1, 2)
+    curr_sec, sec, mins = f.record_timer(screen, HEIGHT, WIDTH, if_record, curr_sec, sec, mins)
     pygame.display.flip()
 #this will quite the  window of the pygame 
 pygame.quit()

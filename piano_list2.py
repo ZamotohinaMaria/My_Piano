@@ -78,9 +78,12 @@ midi_notes = {'C2': 36, 'D-2': 37, 'D2': 38, 'E-2': 39, 'E2': 40, 'F2' :41, 'G-2
                'C5': 72, 'D-5': 73, 'D5': 74, 'E-5':75, 'E5': 76, 'F5': 77, 'G-5':78, 'G5':79, 'A-5': 80, 'A5': 81, 'B-5': 82, 'B5':83, 'C6': 84}
 
 learn_samples = {
-    'ABBA' : 'abba abba abba abba abba\b abba abba abba abba abba\b abba abba abba abba abba\n abba abba abba abba abba\n abba abba abba abba\n',
-    'Konb' : 'konb konb konb konb konb konb konb konb konb konb konb konb konb konb',
-    'KISH' : 'kish kish kish ksih kish'
+    'ABBA' : 'assets\\samples\\ABBA.png',
+    'Konb' : 'assets\\samples\\Konb.png',
+    'Konb-hard' : 'assets\\samples\\Konb-hard.png'
 }
 
 licence_keys = ['1234', 'qwerty']
+
+kon = ['D4', 'E4', 'F4', 'E4', 'D4', 'C4', 'B-3', 'A3', 'D4', 'C4', 'D4', 'E4', 'F4', 'F4', 'G4', 'A4', 
+       'D4', 'D4', 'B-4', 'A4', 'G4', 'A4', 'G4', 'F4', 'E4', 'F4', 'D4', 'E4', 'F4', 'F4', 'F4', 'G4', 'A4', 'E4', 'F4', 'D4']

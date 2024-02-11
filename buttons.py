@@ -99,16 +99,16 @@ def create_buttons(screen, WIDTH, HEIGHT):
         screen, WIDTH/150 + WIDTH*(40/50), HEIGHT*(1/120), WIDTH*(5/31), HEIGHT*(1/20), name='Выбрать композицию',
         choices=[
             'Выбрать композицию',
-            'ABBA',
-            'Конь',
-            'Кукла колдуна',
+            'ABBA - Happy new year',
+            'Конь Любе- Hard',
+            'Конь Любе- Esay',
         ],
         font = pygame.font.Font('assets/timesnrcyrmt_bold.ttf', 24),
         borderRadius=3, 
         inactiveColour=(240, 240, 255), 
         hoverColour=(225, 225, 255), 
         pressedColour=(160, 160, 255),
-        values=[None, 'ABBA', 'Konb', 'KISH'], direction='down'
+        values=[None, 'ABBA', 'Konb-hard', 'Konb'], direction='down'
     )
     
     return (btn_record, btn_stop_record, btn_play_music, 
